@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>پرتو — دستیار هوشمند</title>
+  <title>پرتو هوش مصنوعی فیض الله نظری</title>
   <style>
     * { box-sizing: border-box; font-family: Tahoma, Arial, sans-serif; }
     body { margin: 0; background: #0f172a; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; }
+
     header {
       padding: 12px 16px;
       background: #1e293b;
@@ -15,11 +16,9 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      flex-wrap: wrap;
     }
-    .brand { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 1.05rem; }
-    .dot { width: 9px; height: 9px; border-radius: 50%; background: #22c55e; display: inline-block; }
-    .header-actions { display: flex; gap: 8px; align-items: center; }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 1rem; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #22c55e; display: inline-block; flex-shrink: 0; }
     .btn-clear {
       padding: 6px 12px;
       border-radius: 8px;
@@ -27,36 +26,69 @@
       background: #0f172a;
       color: #e2e8f0;
       cursor: pointer;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
     }
     .btn-clear:hover { background: #334155; }
 
-    .modes-bar {
-      padding: 8px 16px;
+    .active-tool-bar {
+      padding: 6px 16px;
       background: #131c31;
       border-bottom: 1px solid #1e293b;
+      font-size: 0.8rem;
+      color: #93c5fd;
       display: flex;
+      align-items: center;
+      justify-content: space-between;
       gap: 8px;
-      overflow-x: auto;
-      white-space: nowrap;
     }
-    .mode-btn {
-      padding: 5px 11px;
-      border-radius: 999px;
-      border: 1px solid #334155;
-      background: #1e293b;
+    .reset-tool-btn {
+      background: transparent;
+      border: none;
       color: #cbd5e1;
-      font-size: 0.82rem;
+      text-decoration: underline;
       cursor: pointer;
-    }
-    .mode-btn.active {
-      background: #2563eb;
-      border-color: #3b82f6;
-      color: #fff;
-      font-weight: bold;
+      font-size: 0.78rem;
+      padding: 0;
     }
 
-    #chat { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    #chat { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; position: relative; }
+
+    .welcome-box {
+      margin: auto;
+      max-width: 560px;
+      width: 100%;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 20px 16px;
+      text-align: center;
+    }
+    .welcome-title { font-size: 1.05rem; font-weight: bold; color: #38bdf8; margin-bottom: 10px; }
+    .welcome-text { font-size: 0.95rem; line-height: 1.85; color: #f1f5f9; margin-bottom: 16px; }
+
+    .quick-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+    .quick-item {
+      width: 100%;
+      max-width: 340px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .quick-item:hover { background: #1e293b; border-color: #60a5fa; }
+
     .msg-wrap { display: flex; flex-direction: column; max-width: 85%; gap: 4px; }
     .wrap-user { align-self: flex-start; }
     .wrap-bot { align-self: flex-end; }
@@ -82,25 +114,79 @@
     }
     .copy-btn:hover { color: #f8fafc; border-color: #64748b; }
 
-    form { display: flex; gap: 8px; padding: 12px; background: #1e293b; border-top: 1px solid #334155; }
+    .plus-menu {
+      position: fixed;
+      bottom: 74px;
+      right: 16px;
+      width: 230px;
+      background: #1e293b;
+      border: 1px solid #475569;
+      border-radius: 14px;
+      padding: 6px;
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+      z-index: 20;
+    }
+    .plus-menu.open { display: flex; }
+    .menu-opt {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: #f8fafc;
+      text-align: right;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .menu-opt:hover, .menu-opt.active { background: #2563eb; color: #fff; }
+
+    form {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      background: #1e293b;
+      border-top: 1px solid #334155;
+      align-items: center;
+    }
+    .plus-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 1.35rem;
+      line-height: 1;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .plus-btn:hover { background: #334155; }
+
     textarea {
       flex: 1;
       resize: none;
-      height: 48px;
+      height: 46px;
       padding: 10px;
-      border-radius: 8px;
+      border-radius: 10px;
       border: 1px solid #475569;
       background: #0f172a;
       color: #fff;
     }
     button[type="submit"] {
-      padding: 0 18px;
+      height: 46px;
+      padding: 0 16px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       background: #22c55e;
       color: #052e16;
       font-weight: bold;
       cursor: pointer;
+      flex-shrink: 0;
     }
     button:disabled { opacity: 0.6; cursor: not-allowed; }
   </style>
@@ -109,54 +195,196 @@
   <header>
     <div class="brand">
       <span class="dot"></span>
-      <span>پرتو — دستیار هوشمند</span>
+      <span>پرتو هوش مصنوعی فیض الله نظری</span>
     </div>
-    <div class="header-actions">
-      <button type="button" class="btn-clear" id="clearBtn">پاک کردن چت</button>
-    </div>
+    <button type="button" class="btn-clear" id="clearBtn">پاک کردن چت</button>
   </header>
 
-  <div class="modes-bar" id="modesBar">
-    <button type="button" class="mode-btn active" data-mode="general">گفتگوی عادی</button>
-    <button type="button" class="mode-btn" data-mode="long">متن بلند و سناریو</button>
-    <button type="button" class="mode-btn" data-mode="summary">خلاصه‌سازی</button>
-    <button type="button" class="mode-btn" data-mode="translate">ترجمه روان</button>
-    <button type="button" class="mode-btn" data-mode="idea">ایده‌پردازی</button>
+  <div class="active-tool-bar">
+    <span id="activeToolLabel">حالت فعلی: گفتگوی عادی</span>
+    <button type="button" class="reset-tool-btn" id="resetToolBtn">بازگشت به حالت عادی</button>
   </div>
 
   <div id="chat"></div>
 
+  <div class="plus-menu" id="plusMenu">
+    <button type="button" class="menu-opt" data-tool="camera">📷 دوربین</button>
+    <button type="button" class="menu-opt" data-tool="photos">🖼️ تصاویر</button>
+    <button type="button" class="menu-opt" data-tool="files">📎 فایل‌ها</button>
+    <button type="button" class="menu-opt" data-tool="plugins">🔌 افزونه‌ها</button>
+    <button type="button" class="menu-opt" data-tool="think">🧠 تفکر عمیق‌تر</button>
+  </div>
+
   <form id="form">
-    <textarea id="input" placeholder="هر سوالی، متنی یا کدی داری بنویس..."></textarea>
+    <button type="button" class="plus-btn" id="plusBtn" title="گزینه‌های بیشتر">+</button>
+    <textarea id="input" placeholder="از پرتو هر سوالی داری بپرس..."></textarea>
     <button type="submit" id="sendBtn">ارسال</button>
   </form>
 
+  <input type="file" id="filePicker" style="display:none" />
+
   <script>
+    const WELCOME_TITLE = "پرتو هوش مصنوعی فیض الله نظری";
+    const WELCOME_MESSAGE = "من (پرتو) هستم دستیار هوش مصنوعی فیض الله نظری چطور میتوانم کمکتان کنم ؟";
+
     const chat = document.getElementById("chat");
     const form = document.getElementById("form");
     const input = document.getElementById("input");
     const sendBtn = document.getElementById("sendBtn");
     const clearBtn = document.getElementById("clearBtn");
-    const modeButtons = document.querySelectorAll(".mode-btn");
+    const plusBtn = document.getElementById("plusBtn");
+    const plusMenu = document.getElementById("plusMenu");
+    const activeToolLabel = document.getElementById("activeToolLabel");
+    const resetToolBtn = document.getElementById("resetToolBtn");
+    const filePicker = document.getElementById("filePicker");
+    const menuOpts = document.querySelectorAll(".menu-opt");
 
-    let currentMode = "general";
+    let currentTool = "normal";
     let history = [];
 
-    const modeInstructions = {
-      general: "پاسخ‌ها را شفاف، طبیعی و کاربردی بده.",
-      long: "متنی جامع، منظم، عمیق و کامل بنویس؛ اگر مناسب است با بخش‌بندی روشن ارائه بده.",
-      summary: "مطلب را کوتاه، دقیق و بدون حاشیه با نکات کلیدی خلاصه کن.",
-      translate: "متن را به زبانی روان، طبیعی و وفادار به معنی ترجمه کن.",
-      idea: "ایده‌های خلاقانه، عملی و متنوع با توضیح کوتاه برای هر ایده ارائه بده."
+    const toolLabels = {
+      normal: "حالت فعلی: گفتگوی عادی",
+      image_prompt: "حالت فعلی: ایجاد تصویر یا استیکر (پرامپت/توضیح)",
+      write_edit: "حالت فعلی: بنویسید یا ویرایش کنید",
+      web_guide: "حالت فعلی: جستجو در وب (راهنمایی و تحقیق)",
+      camera: "حالت فعلی: دوربین (توضیح متنی صحنه یا سوژه)",
+      photos: "حالت فعلی: تصاویر (توصیف و پرامپت تصویر)",
+      files: "حالت فعلی: فایل‌ها (متن فایل را پیست کنید)",
+      plugins: "حالت فعلی: افزونه‌ها",
+      think: "حالت فعلی: تفکر عمیق‌تر"
     };
 
-    modeButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        modeButtons.forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        currentMode = btn.dataset.mode;
+    const toolInstructions = {
+      normal: "پاسخ‌ها را واضح، صمیمی و دقیق بده.",
+      image_prompt: "برای درخواست تصویر یا استیکر، یک توضیح/پرامپت دقیق و قابل استفاده بده و اگر نیاز به ابزار تولید تصویر مستقل باشد شفاف توضیح بده.",
+      write_edit: "متن را با کیفیت بالا بنویس، اصلاح کن یا بازنویسی کن.",
+      web_guide: "موضوع را با توضیح شفاف و ساختاریافته بررسی کن؛ اگر نیاز به اطلاعات زنده اینترنتی باشد که در دسترس نیست، صادقانه بگو.",
+      camera: "بر اساس توضیح کاربر درباره صحنه یا سوژه دوربین، راهنمای دقیق و کاربردی بده.",
+      photos: "بر اساس توضیح کاربر درباره عکس، ایده، تحلیل یا پرامپت مناسب بده.",
+      files: "محتوای متنی‌ای که کاربر درباره فایل می‌فرستد را دقیق بررسی، خلاصه یا ویرایش کن.",
+      plugins: "راهکار عملی و مرحله‌به‌مرحله برای قابلیت یا ابزار مورد نظر ارائه بده.",
+      think: "مسئله را عمیق‌تر، مرحله‌به‌مرحله و با دقت بالا تحلیل کن و پاسخ جامع بده."
+    };
+
+    function setTool(toolKey) {
+      currentTool = toolKey;
+      activeToolLabel.textContent = toolLabels[toolKey] || toolLabels.normal;
+      menuOpts.forEach((opt) => {
+        opt.classList.toggle("active", opt.dataset.tool === toolKey);
+      });
+    }
+
+    plusBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      plusMenu.classList.toggle("open");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!plusMenu.contains(e.target) && e.target !== plusBtn) {
+        plusMenu.classList.remove("open");
+      }
+    });
+
+    resetToolBtn.addEventListener("click", () => {
+      setTool("normal");
+    });
+
+    menuOpts.forEach((opt) => {
+      opt.addEventListener("click", () => {
+        const chosen = opt.dataset.tool;
+        plusMenu.classList.remove("open");
+
+        if (chosen === "camera") {
+          filePicker.accept = "image/*";
+          filePicker.setAttribute("capture", "environment");
+          setTool("camera");
+          filePicker.click();
+          return;
+        }
+        if (chosen === "photos") {
+          filePicker.accept = "image/*";
+          filePicker.removeAttribute("capture");
+          setTool("photos");
+          filePicker.click();
+          return;
+        }
+        if (chosen === "files") {
+          filePicker.accept = ".txt,.md,.csv,.json,.html,.py,.js";
+          filePicker.removeAttribute("capture");
+          setTool("files");
+          filePicker.click();
+          return;
+        }
+
+        setTool(chosen);
+        input.focus();
       });
     });
+
+    filePicker.addEventListener("change", () => {
+      const f = filePicker.files && filePicker.files[0];
+      if (!f) return;
+      if (f.type && f.type.startsWith("text/")) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const content = String(reader.result || "").slice(0, 4000);
+          input.value = `محتوای فایل (${f.name}):\n${content}`;
+          input.focus();
+        };
+        reader.readAsText(f, "utf-8");
+      } else {
+        input.value = `فایل «${f.name}» انتخاب شد. درباره این موضوع چه کمکی می‌خواهی؟`;
+        input.focus();
+      }
+      filePicker.value = "";
+    });
+
+    function renderWelcome() {
+      if (chat.children.length > 0) return;
+      const box = document.createElement("div");
+      box.className = "welcome-box";
+      box.id = "welcomeBox";
+
+      const titleEl = document.createElement("div");
+      titleEl.className = "welcome-title";
+      titleEl.textContent = WELCOME_TITLE;
+
+      const textEl = document.createElement("div");
+      textEl.className = "welcome-text";
+      textEl.textContent = WELCOME_MESSAGE;
+
+      const quickList = document.createElement("div");
+      quickList.className = "quick-actions";
+
+      const items = [
+        { label: "🖼️ ایجاد تصویر یا استیکر", tool: "image_prompt", sample: "یک پرامپت دقیق برای ساخت تصویر یا استیکر بنویس: " },
+        { label: "✏️ بنویسید یا ویرایش کنید", tool: "write_edit", sample: "این متن را بنویس یا ویرایش کن: " },
+        { label: "🌐 جستجو در وب", tool: "web_guide", sample: "درباره این موضوع توضیح کامل و دقیق بده: " }
+      ];
+
+      items.forEach((it) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "quick-item";
+        btn.textContent = it.label;
+        btn.addEventListener("click", () => {
+          setTool(it.tool);
+          input.value = it.sample;
+          input.focus();
+        });
+        quickList.appendChild(btn);
+      });
+
+      box.appendChild(titleEl);
+      box.appendChild(textEl);
+      box.appendChild(quickList);
+      chat.appendChild(box);
+    }
+
+    function removeWelcome() {
+      const box = document.getElementById("welcomeBox");
+      if (box) box.remove();
+    }
 
     function escapeHtml(str) {
       return str
@@ -215,6 +443,7 @@
     }
 
     function addUserMessage(text) {
+      removeWelcome();
       const wrap = document.createElement("div");
       wrap.className = "msg-wrap wrap-user";
       const div = document.createElement("div");
@@ -225,7 +454,7 @@
       chat.scrollTop = chat.scrollHeight;
     }
 
-    function createBotMessage(initialText = "پرتو در حال نوشتن پاسخ است...") {
+    function createBotMessage(initialText = "پرتو در حال پاسخ دادن است...") {
       const wrap = document.createElement("div");
       wrap.className = "msg-wrap wrap-bot";
       const div = document.createElement("div");
@@ -269,6 +498,14 @@
     clearBtn.addEventListener("click", () => {
       chat.innerHTML = "";
       history = [];
+      renderWelcome();
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        form.requestSubmit();
+      }
     });
 
     form.addEventListener("submit", async (e) => {
@@ -279,7 +516,7 @@
       input.value = "";
       sendBtn.disabled = true;
       addUserMessage(text);
-      const botMsg = createBotMessage("پرتو در حال نوشتن پاسخ است...");
+      const botMsg = createBotMessage("پرتو در حال پاسخ دادن است...");
 
       const recentHistory = history.slice(-8);
       const payloadMessages = [
@@ -294,8 +531,8 @@
           body: JSON.stringify({
             message: text,
             messages: payloadMessages,
-            mode: currentMode,
-            modeInstruction: modeInstructions[currentMode] || ""
+            mode: currentTool,
+            modeInstruction: toolInstructions[currentTool] || ""
           })
         });
         const data = await res.json();
@@ -310,6 +547,8 @@
         input.focus();
       }
     });
+
+    renderWelcome();
   </script>
 </body>
 </html>
