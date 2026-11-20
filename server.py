@@ -26,24 +26,42 @@ def load_api_key():
     return ""
 
 
-def ask_gemini(prompt_text):
+def build_contents(prompt_text, messages):
+    contents = []
+    if isinstance(messages, list) and messages:
+        for m in messages[-8:]:
+            if not isinstance(m, dict):
+                continue
+            role = m.get("role")
+            content = str(m.get("content") or "").strip()
+            if not content:
+                continue
+            gemini_role = "model" if role in ("assistant", "model") else "user"
+            contents.append({"role": gemini_role, "parts": [{"text": content}]})
+
+    if not contents:
+        contents.append({"role": "user", "parts": [{"text": prompt_text or "سلام"}]})
+    return contents
+
+
+def ask_gemini(prompt_text, messages=None, mode_instruction=""):
     api_key = load_api_key()
     if not api_key:
-        return "کلید API در فایل key.txt پیدا نشد."
+        return "کلید API پیدا نشد."
+
+    base_instruction = (
+        "تو «پرتو»، یک دستیار هوشمند و دقیق هستی. "
+        "همیشه به زبانِ پیامِ کاربر پاسخ بده. "
+        "مستقیم، طبیعی و کامل جواب بده و از جملات قالبی یا تکراری پرهیز کن."
+    )
+    if mode_instruction:
+        base_instruction += f" راهنمای حالت فعلی: {mode_instruction}"
 
     payload = {
         "systemInstruction": {
-            "parts": [
-                {
-                    "text": (
-                        "تو یک دستیار هوشمند و دقیق هستی. "
-                        "همیشه به زبانِ پیامِ کاربر پاسخ بده. "
-                        "مستقیم، طبیعی و کامل جواب بده و از جملات قالبی یا تکراری پرهیز کن."
-                    )
-                }
-            ]
+            "parts": [{"text": base_instruction}]
         },
-        "contents": [{"role": "user", "parts": [{"text": prompt_text}]}],
+        "contents": build_contents(prompt_text, messages),
         "generationConfig": {"temperature": 0.65, "maxOutputTokens": 8192},
     }
     raw_body = json.dumps(payload).encode("utf-8")
@@ -117,12 +135,16 @@ class Handler(BaseHTTPRequestHandler):
             raw = self.rfile.read(length) if length > 0 else b"{}"
             obj = json.loads(raw.decode("utf-8") or "{}")
             prompt = str(obj.get("message") or "").strip()
-            if not prompt and isinstance(obj.get("messages"), list):
-                for m in reversed(obj["messages"]):
+            messages = obj.get("messages") if isinstance(obj.get("messages"), list) else []
+            mode_instruction = str(obj.get("modeInstruction") or "").strip()
+
+            if not prompt and messages:
+                for m in reversed(messages):
                     if isinstance(m, dict) and m.get("role") == "user":
                         prompt = str(m.get("content") or "").strip()
                         break
-            reply = ask_gemini(prompt or "سلام")
+
+            reply = ask_gemini(prompt or "سلام", messages=messages, mode_instruction=mode_instruction)
             self.send_json(200, {"reply": reply})
         except Exception:
             self.send_json(200, {"reply": "مشکلی در پردازش پیام پیش آمد."})
@@ -130,7 +152,7 @@ class Handler(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     srv = ThreadingHTTPServer((HOST, PORT), Handler)
-    print(f"New AI running at http://{HOST}:{PORT}", flush=True)
+    print(f"Parto AI running at http://{HOST}:{PORT}", flush=True)
     try:
         srv.serve_forever()
     except KeyboardInterrupt:
