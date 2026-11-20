@@ -6,12 +6,12 @@
   <title>پرتو هوش مصنوعی (نظری)</title>
   <style>
     * { box-sizing: border-box; font-family: Tahoma, Arial, sans-serif; }
-    body { margin: 0; background: #0f172a; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    body { margin: 0; background: #0b1324; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
     header {
       padding: 12px 14px;
-      background: #1e293b;
-      border-bottom: 1px solid #334155;
+      background: linear-gradient(90deg, #132238 0%, #172a46 100%);
+      border-bottom: 1px solid #284166;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -20,16 +20,16 @@
       z-index: 15;
     }
     .header-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
-    .brand { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 0.96rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .dot { width: 9px; height: 9px; border-radius: 50%; background: #22c55e; display: inline-block; flex-shrink: 0; }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 0.96rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #e0f2fe; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 8px #38bdf8; display: inline-block; flex-shrink: 0; }
 
     .hdr-btn {
       width: 36px;
       height: 36px;
       border-radius: 9px;
-      border: 1px solid #475569;
-      background: #0f172a;
-      color: #f8fafc;
+      border: 1px solid #355480;
+      background: #0d182b;
+      color: #e0f2fe;
       font-size: 1.05rem;
       cursor: pointer;
       display: flex;
@@ -37,7 +37,7 @@
       justify-content: center;
       flex-shrink: 0;
     }
-    .hdr-btn:hover { background: #334155; }
+    .hdr-btn:hover { background: #1e3a5f; border-color: #38bdf8; }
 
     .header-right { display: flex; align-items: center; gap: 6px; position: relative; }
 
@@ -46,24 +46,24 @@
       top: 44px;
       left: 0;
       width: 255px;
-      background: #1e293b;
-      border: 1px solid #475569;
+      background: #132238;
+      border: 1px solid #355480;
       border-radius: 12px;
       padding: 8px;
       display: none;
       flex-direction: column;
       gap: 6px;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 12px 28px rgba(2, 8, 23, 0.65);
       z-index: 40;
     }
     .three-dots-menu.open { display: flex; }
     .gmail-box {
-      background: #0f172a;
-      border: 1px solid #334155;
+      background: #0b1324;
+      border: 1px solid #284166;
       border-radius: 9px;
       padding: 8px;
       font-size: 0.8rem;
-      color: #cbd5e1;
+      color: #bae6fd;
       line-height: 1.5;
     }
     .gmail-addr { color: #38bdf8; font-weight: bold; word-break: break-all; margin-top: 2px; }
@@ -71,19 +71,19 @@
       width: 100%;
       padding: 9px 10px;
       border-radius: 8px;
-      border: 1px solid #334155;
-      background: #0f172a;
+      border: 1px solid #284166;
+      background: #0b1324;
       color: #f8fafc;
       font-size: 0.84rem;
       text-align: right;
       cursor: pointer;
     }
-    .dots-action:hover { background: #2563eb; border-color: #3b82f6; }
+    .dots-action:hover { background: #0284c7; border-color: #38bdf8; }
 
     .drawer-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.55);
+      background: rgba(2, 8, 23, 0.65);
       display: none;
       z-index: 30;
     }
@@ -96,8 +96,8 @@
       width: 280px;
       max-width: 82vw;
       height: 100vh;
-      background: #131c31;
-      border-left: 1px solid #334155;
+      background: #0f1b30;
+      border-left: 1px solid #284166;
       display: flex;
       flex-direction: column;
       padding: 14px;
@@ -112,13 +112,13 @@
       padding: 10px 12px;
       border-radius: 10px;
       border: none;
-      background: #2563eb;
+      background: linear-gradient(135deg, #0284c7, #2563eb);
       color: #fff;
       font-weight: bold;
       font-size: 0.9rem;
       cursor: pointer;
     }
-    .new-chat-btn:hover { background: #1d4ed8; }
+    .new-chat-btn:hover { background: linear-gradient(135deg, #0369a1, #1d4ed8); }
     .chat-list {
       flex: 1;
       overflow-y: auto;
@@ -129,8 +129,8 @@
     .chat-item {
       padding: 9px 11px;
       border-radius: 9px;
-      border: 1px solid #1e293b;
-      background: #0f172a;
+      border: 1px solid #1e3352;
+      background: #0b1324;
       color: #e2e8f0;
       font-size: 0.84rem;
       text-align: right;
@@ -139,14 +139,14 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .chat-item.active { background: #1e293b; border-color: #38bdf8; color: #fff; font-weight: bold; }
+    .chat-item.active { background: #162946; border-color: #38bdf8; color: #fff; font-weight: bold; }
 
     .active-tool-bar {
       padding: 6px 16px;
-      background: #131c31;
-      border-bottom: 1px solid #1e293b;
+      background: #0e192d;
+      border-bottom: 1px solid #1e3352;
       font-size: 0.8rem;
-      color: #93c5fd;
+      color: #7dd3fc;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -155,7 +155,7 @@
     .reset-tool-btn {
       background: transparent;
       border: none;
-      color: #cbd5e1;
+      color: #bae6fd;
       text-decoration: underline;
       cursor: pointer;
       font-size: 0.78rem;
@@ -168,13 +168,14 @@
       margin: auto;
       max-width: 560px;
       width: 100%;
-      background: #1e293b;
-      border: 1px solid #334155;
+      background: linear-gradient(180deg, #132238 0%, #101d32 100%);
+      border: 1px solid #2c4770;
       border-radius: 16px;
       padding: 20px 16px;
       text-align: center;
+      box-shadow: 0 10px 28px rgba(2, 8, 23, 0.45);
     }
-    .welcome-title { font-size: 1.05rem; font-weight: bold; color: #38bdf8; margin-bottom: 10px; }
+    .welcome-title { font-size: 1.08rem; font-weight: bold; color: #38bdf8; margin-bottom: 10px; }
     .welcome-text { font-size: 0.95rem; line-height: 1.85; color: #f1f5f9; margin-bottom: 16px; }
 
     .quick-actions { display: flex; flex-direction: column; gap: 8px; align-items: center; }
@@ -183,21 +184,22 @@
       max-width: 340px;
       padding: 10px 14px;
       border-radius: 12px;
-      border: 1px solid #334155;
-      background: #0f172a;
-      color: #f8fafc;
+      border: 1px solid #2c4770;
+      background: #0b1324;
+      color: #e0f2fe;
       font-size: 0.88rem;
       cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
     }
-    .quick-item:hover { background: #1e293b; border-color: #60a5fa; }
+    .quick-item:hover { background: #162946; border-color: #38bdf8; }
 
     .msg-wrap { display: flex; flex-direction: column; max-width: 85%; gap: 4px; }
     .wrap-user { align-self: flex-start; }
     .wrap-bot { align-self: flex-end; }
 
     .msg { padding: 12px 14px; border-radius: 12px; line-height: 1.75; word-wrap: break-word; }
-    .user { background: #2563eb; color: #fff; white-space: pre-wrap; }
-    .bot { background: #1e293b; border: 1px solid #334155; }
+    .user { background: linear-gradient(135deg, #0284c7, #2563eb); color: #fff; white-space: pre-wrap; }
+    .bot { background: #132238; border: 1px solid #284166; }
     .bot p { margin: 0 0 8px 0; }
     .bot p:last-child { margin-bottom: 0; }
     .bot h3 { margin: 10px 0 6px 0; color: #38bdf8; font-size: 1rem; }
@@ -209,26 +211,26 @@
       padding: 3px 9px;
       font-size: 0.75rem;
       border-radius: 6px;
-      border: 1px solid #334155;
-      background: #0f172a;
-      color: #94a3b8;
+      border: 1px solid #284166;
+      background: #0b1324;
+      color: #7dd3fc;
       cursor: pointer;
     }
-    .copy-btn:hover { color: #f8fafc; border-color: #64748b; }
+    .copy-btn:hover { color: #fff; border-color: #38bdf8; }
 
     .plus-menu {
       position: fixed;
       bottom: 74px;
       right: 16px;
       width: 230px;
-      background: #1e293b;
-      border: 1px solid #475569;
+      background: #132238;
+      border: 1px solid #355480;
       border-radius: 14px;
       padding: 6px;
       display: none;
       flex-direction: column;
       gap: 2px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 10px 25px rgba(2, 8, 23, 0.55);
       z-index: 20;
     }
     .plus-menu.open { display: flex; }
@@ -242,23 +244,23 @@
       font-size: 0.88rem;
       cursor: pointer;
     }
-    .menu-opt:hover, .menu-opt.active { background: #2563eb; color: #fff; }
+    .menu-opt:hover, .menu-opt.active { background: #0284c7; color: #fff; }
 
     form {
       display: flex;
       gap: 6px;
       padding: 10px 12px;
-      background: #1e293b;
-      border-top: 1px solid #334155;
+      background: #132238;
+      border-top: 1px solid #284166;
       align-items: center;
     }
     .icon-btn {
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      border: 1px solid #475569;
-      background: #0f172a;
-      color: #f8fafc;
+      border: 1px solid #355480;
+      background: #0b1324;
+      color: #e0f2fe;
       font-size: 1.05rem;
       cursor: pointer;
       flex-shrink: 0;
@@ -266,8 +268,8 @@
       align-items: center;
       justify-content: center;
     }
-    .icon-btn:hover { background: #334155; }
-    .icon-btn.recording, .icon-btn.live-active { background: #2563eb; border-color: #60a5fa; color: #fff; }
+    .icon-btn:hover { background: #1e3a5f; border-color: #38bdf8; }
+    .icon-btn.recording, .icon-btn.live-active { background: #0284c7; border-color: #38bdf8; color: #fff; }
 
     textarea {
       flex: 1;
@@ -275,29 +277,31 @@
       height: 44px;
       padding: 9px 10px;
       border-radius: 10px;
-      border: 1px solid #475569;
-      background: #0f172a;
+      border: 1px solid #355480;
+      background: #0b1324;
       color: #fff;
       font-size: 0.9rem;
     }
+    textarea:focus { outline: none; border-color: #38bdf8; }
     button[type="submit"] {
       height: 44px;
       padding: 0 14px;
       border: none;
       border-radius: 10px;
-      background: #22c55e;
-      color: #052e16;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ecfdf5;
       font-weight: bold;
       cursor: pointer;
       flex-shrink: 0;
     }
+    button[type="submit"]:hover { background: linear-gradient(135deg, #059669, #047857); }
     button:disabled { opacity: 0.6; cursor: not-allowed; }
 
     .live-overlay {
       position: fixed;
       inset: 0;
-      background: #f8fafc;
-      color: #0f172a;
+      background: #f0f9ff;
+      color: #0b1324;
       display: none;
       flex-direction: column;
       justify-content: space-between;
@@ -311,28 +315,28 @@
       width: 170px;
       height: 170px;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, #93c5fd, #2563eb 65%, #1d4ed8);
-      box-shadow: 0 12px 35px rgba(37, 99, 235, 0.35);
+      background: radial-gradient(circle at 30% 30%, #7dd3fc, #0284c7 65%, #1d4ed8);
+      box-shadow: 0 12px 35px rgba(2, 132, 199, 0.35);
       transition: transform 0.25s ease;
     }
     .live-orb.pulse { transform: scale(1.08); }
-    .live-status { font-size: 1rem; font-weight: bold; color: #1e293b; }
+    .live-status { font-size: 1rem; font-weight: bold; color: #0f172a; }
     .live-transcript { font-size: 0.9rem; color: #334155; line-height: 1.7; max-height: 150px; overflow-y: auto; padding: 0 8px; }
     .live-bottom { display: flex; justify-content: center; gap: 18px; align-items: center; padding-bottom: 12px; }
     .live-circle-btn {
       width: 54px;
       height: 54px;
       border-radius: 50%;
-      border: 1px solid #cbd5e1;
+      border: 1px solid #bae6fd;
       background: #ffffff;
-      color: #0f172a;
+      color: #0b1324;
       font-size: 1.1rem;
       font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.12);
     }
     .live-circle-btn.muted { background: #e2e8f0; color: #475569; }
-    .live-close-btn { background: #0f172a; color: #ffffff; border-color: #0f172a; }
+    .live-close-btn { background: #0b1324; color: #ffffff; border-color: #0b1324; }
   </style>
 </head>
 <body>
@@ -370,20 +374,20 @@
     </div>
   </header>
 
-  <div id="gmailModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:60; align-items:center; justify-content:center; padding:16px;">
-    <div style="background:#1e293b; border:1px solid #475569; border-radius:14px; padding:16px; width:100%; max-width:360px; display:flex; flex-direction:column; gap:10px;">
+  <div id="gmailModal" style="display:none; position:fixed; inset:0; background:rgba(2,8,23,0.7); z-index:60; align-items:center; justify-content:center; padding:16px;">
+    <div style="background:#132238; border:1px solid #355480; border-radius:14px; padding:16px; width:100%; max-width:360px; display:flex; flex-direction:column; gap:10px;">
       <div style="font-weight:bold; color:#38bdf8; font-size:0.95rem;">اتصال یا انتخاب جیمیل</div>
       <input
         type="email"
         id="gmailInput"
         autocomplete="email"
         placeholder="example@gmail.com"
-        style="width:100%; padding:10px; border-radius:8px; border:1px solid #475569; background:#0f172a; color:#fff; direction:ltr; text-align:left;"
+        style="width:100%; padding:10px; border-radius:8px; border:1px solid #355480; background:#0b1324; color:#fff; direction:ltr; text-align:left;"
       />
       <div id="savedGmailChips" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
       <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:4px;">
-        <button type="button" id="cancelGmailBtn" style="padding:8px 12px; border-radius:8px; border:1px solid #475569; background:#0f172a; color:#e2e8f0; cursor:pointer;">لغو</button>
-        <button type="button" id="saveGmailConfirmBtn" style="padding:8px 14px; border-radius:8px; border:none; background:#22c55e; color:#052e16; font-weight:bold; cursor:pointer;">ذخیره</button>
+        <button type="button" id="cancelGmailBtn" style="padding:8px 12px; border-radius:8px; border:1px solid #355480; background:#0b1324; color:#e2e8f0; cursor:pointer;">لغو</button>
+        <button type="button" id="saveGmailConfirmBtn" style="padding:8px 14px; border-radius:8px; border:none; background:#10b981; color:#ecfdf5; font-weight:bold; cursor:pointer;">ذخیره</button>
       </div>
     </div>
   </div>
@@ -567,7 +571,7 @@
         const chip = document.createElement("button");
         chip.type = "button";
         chip.textContent = addr;
-        chip.style.cssText = "padding:5px 9px; border-radius:999px; border:1px solid #334155; background:#0f172a; color:#93c5fd; font-size:0.78rem; cursor:pointer;";
+        chip.style.cssText = "padding:5px 9px; border-radius:999px; border:1px solid #284166; background:#0b1324; color:#7dd3fc; font-size:0.78rem; cursor:pointer;";
         chip.addEventListener("click", () => {
           gmailInput.value = addr;
         });
