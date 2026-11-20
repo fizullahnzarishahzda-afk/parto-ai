@@ -4,8 +4,8 @@ import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-HOST = "127.0.0.1"
-PORT = 8090
+HOST = "0.0.0.0"
+PORT = int(os.environ.get("PORT", "8090"))
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 MODELS = [
@@ -130,7 +130,7 @@ class Handler(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     srv = ThreadingHTTPServer((HOST, PORT), Handler)
-    print(f"New AI running at http://{HOST}:{PORT}")
+    print(f"New AI running at http://{HOST}:{PORT}", flush=True)
     try:
         srv.serve_forever()
     except KeyboardInterrupt:
