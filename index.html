@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>پرتو هوش مصنوعی فیض الله نظری</title>
+  <title>پرتو هوش مصنوعی (نظری)</title>
   <style>
     * { box-sizing: border-box; font-family: Tahoma, Arial, sans-serif; }
     body { margin: 0; background: #0f172a; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; }
@@ -17,7 +17,7 @@
       justify-content: space-between;
       gap: 10px;
     }
-    .brand { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 1rem; }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 0.98rem; }
     .dot { width: 9px; height: 9px; border-radius: 50%; background: #22c55e; display: inline-block; flex-shrink: 0; }
     .btn-clear {
       padding: 6px 12px;
@@ -26,7 +26,7 @@
       background: #0f172a;
       color: #e2e8f0;
       cursor: pointer;
-      font-size: 0.84rem;
+      font-size: 0.82rem;
     }
     .btn-clear:hover { background: #334155; }
 
@@ -51,7 +51,7 @@
       padding: 0;
     }
 
-    #chat { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; position: relative; }
+    #chat { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
 
     .welcome-box {
       margin: auto;
@@ -66,12 +66,7 @@
     .welcome-title { font-size: 1.05rem; font-weight: bold; color: #38bdf8; margin-bottom: 10px; }
     .welcome-text { font-size: 0.95rem; line-height: 1.85; color: #f1f5f9; margin-bottom: 16px; }
 
-    .quick-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      align-items: center;
-    }
+    .quick-actions { display: flex; flex-direction: column; gap: 8px; align-items: center; }
     .quick-item {
       width: 100%;
       max-width: 340px;
@@ -82,10 +77,6 @@
       color: #f8fafc;
       font-size: 0.88rem;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
     }
     .quick-item:hover { background: #1e293b; border-color: #60a5fa; }
 
@@ -139,47 +130,52 @@
       text-align: right;
       font-size: 0.88rem;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
     .menu-opt:hover, .menu-opt.active { background: #2563eb; color: #fff; }
 
     form {
       display: flex;
-      gap: 8px;
-      padding: 12px;
+      gap: 6px;
+      padding: 10px 12px;
       background: #1e293b;
       border-top: 1px solid #334155;
       align-items: center;
     }
-    .plus-btn {
-      width: 42px;
-      height: 42px;
+    .icon-btn {
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       border: 1px solid #475569;
       background: #0f172a;
       color: #f8fafc;
-      font-size: 1.35rem;
-      line-height: 1;
+      font-size: 1.05rem;
       cursor: pointer;
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .plus-btn:hover { background: #334155; }
+    .icon-btn:hover { background: #334155; }
+    .icon-btn.recording, .icon-btn.live-active {
+      background: #2563eb;
+      border-color: #60a5fa;
+      color: #fff;
+    }
 
     textarea {
       flex: 1;
       resize: none;
-      height: 46px;
-      padding: 10px;
+      height: 44px;
+      padding: 9px 10px;
       border-radius: 10px;
       border: 1px solid #475569;
       background: #0f172a;
       color: #fff;
+      font-size: 0.9rem;
     }
     button[type="submit"] {
-      height: 46px;
-      padding: 0 16px;
+      height: 44px;
+      padding: 0 14px;
       border: none;
       border-radius: 10px;
       background: #22c55e;
@@ -189,13 +185,89 @@
       flex-shrink: 0;
     }
     button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* حالت مکالمه صوتی زنده شبیه ویدیو */
+    .live-overlay {
+      position: fixed;
+      inset: 0;
+      background: #f8fafc;
+      color: #0f172a;
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+      z-index: 50;
+    }
+    .live-overlay.open { display: flex; }
+    .live-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+    .live-center {
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      text-align: center;
+      max-width: 480px;
+    }
+    .live-orb {
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #93c5fd, #2563eb 65%, #1d4ed8);
+      box-shadow: 0 12px 35px rgba(37, 99, 235, 0.35);
+      transition: transform 0.25s ease;
+    }
+    .live-orb.pulse { transform: scale(1.08); }
+    .live-status { font-size: 1rem; font-weight: bold; color: #1e293b; }
+    .live-transcript {
+      font-size: 0.9rem;
+      color: #334155;
+      line-height: 1.7;
+      max-height: 150px;
+      overflow-y: auto;
+      padding: 0 8px;
+    }
+    .live-bottom {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      align-items: center;
+      padding-bottom: 12px;
+    }
+    .live-circle-btn {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #0f172a;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    .live-circle-btn.muted {
+      background: #e2e8f0;
+      color: #475569;
+    }
+    .live-close-btn {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+    }
   </style>
 </head>
 <body>
   <header>
     <div class="brand">
       <span class="dot"></span>
-      <span>پرتو هوش مصنوعی فیض الله نظری</span>
+      <span>پرتو هوش مصنوعی (نظری)</span>
     </div>
     <button type="button" class="btn-clear" id="clearBtn">پاک کردن چت</button>
   </header>
@@ -216,15 +288,33 @@
   </div>
 
   <form id="form">
-    <button type="button" class="plus-btn" id="plusBtn" title="گزینه‌های بیشتر">+</button>
+    <button type="button" class="icon-btn" id="plusBtn" title="گزینه‌های بیشتر">+</button>
     <textarea id="input" placeholder="از پرتو هر سوالی داری بپرس..."></textarea>
+    <button type="button" class="icon-btn" id="micBtn" title="تبدیل صدا به متن">🎤</button>
+    <button type="button" class="icon-btn" id="liveBtn" title="مکالمه صوتی زنده">🎙️</button>
     <button type="submit" id="sendBtn">ارسال</button>
   </form>
+
+  <div class="live-overlay" id="liveOverlay">
+    <div class="live-top">
+      <span>پرتو هوش مصنوعی (نظری)</span>
+      <span>مکالمه زنده</span>
+    </div>
+    <div class="live-center">
+      <div class="live-orb" id="liveOrb"></div>
+      <div class="live-status" id="liveStatus">در حال گوش دادن...</div>
+      <div class="live-transcript" id="liveTranscript">حرف بزنید تا پرتو جواب دهد و دوباره گوش کند.</div>
+    </div>
+    <div class="live-bottom">
+      <button type="button" class="live-circle-btn" id="liveMuteBtn" title="بی‌صدا / فعال کردن میکروفون">🎤</button>
+      <button type="button" class="live-circle-btn live-close-btn" id="liveCloseBtn" title="خروج از مکالمه زنده">✕</button>
+    </div>
+  </div>
 
   <input type="file" id="filePicker" style="display:none" />
 
   <script>
-    const WELCOME_TITLE = "پرتو هوش مصنوعی فیض الله نظری";
+    const WELCOME_TITLE = "پرتو هوش مصنوعی (نظری)";
     const WELCOME_MESSAGE = "من (پرتو) هستم دستیار هوش مصنوعی فیض الله نظری چطور میتوانم کمکتان کنم ؟";
 
     const chat = document.getElementById("chat");
@@ -234,36 +324,56 @@
     const clearBtn = document.getElementById("clearBtn");
     const plusBtn = document.getElementById("plusBtn");
     const plusMenu = document.getElementById("plusMenu");
+    const micBtn = document.getElementById("micBtn");
+    const liveBtn = document.getElementById("liveBtn");
     const activeToolLabel = document.getElementById("activeToolLabel");
     const resetToolBtn = document.getElementById("resetToolBtn");
     const filePicker = document.getElementById("filePicker");
     const menuOpts = document.querySelectorAll(".menu-opt");
 
+    const liveOverlay = document.getElementById("liveOverlay");
+    const liveOrb = document.getElementById("liveOrb");
+    const liveStatus = document.getElementById("liveStatus");
+    const liveTranscript = document.getElementById("liveTranscript");
+    const liveMuteBtn = document.getElementById("liveMuteBtn");
+    const liveCloseBtn = document.getElementById("liveCloseBtn");
+
     let currentTool = "normal";
     let history = [];
 
+    // تنظیمات تشخیص صدا (صوتی به متن)
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let dictRecognition = null;
+    let isDictating = false;
+
+    // تنظیمات مکالمه زنده پیوسته
+    let liveActive = false;
+    let liveMuted = false;
+    let liveRecognition = null;
+    let liveBusy = false;
+
     const toolLabels = {
       normal: "حالت فعلی: گفتگوی عادی",
-      image_prompt: "حالت فعلی: ایجاد تصویر یا استیکر (پرامپت/توضیح)",
+      image_prompt: "حالت فعلی: ایجاد تصویر یا استیکر",
       write_edit: "حالت فعلی: بنویسید یا ویرایش کنید",
-      web_guide: "حالت فعلی: جستجو در وب (راهنمایی و تحقیق)",
-      camera: "حالت فعلی: دوربین (توضیح متنی صحنه یا سوژه)",
-      photos: "حالت فعلی: تصاویر (توصیف و پرامپت تصویر)",
-      files: "حالت فعلی: فایل‌ها (متن فایل را پیست کنید)",
+      web_guide: "حالت فعلی: جستجو در وب",
+      camera: "حالت فعلی: دوربین",
+      photos: "حالت فعلی: تصاویر",
+      files: "حالت فعلی: فایل‌ها",
       plugins: "حالت فعلی: افزونه‌ها",
       think: "حالت فعلی: تفکر عمیق‌تر"
     };
 
     const toolInstructions = {
       normal: "پاسخ‌ها را واضح، صمیمی و دقیق بده.",
-      image_prompt: "برای درخواست تصویر یا استیکر، یک توضیح/پرامپت دقیق و قابل استفاده بده و اگر نیاز به ابزار تولید تصویر مستقل باشد شفاف توضیح بده.",
+      image_prompt: "برای درخواست تصویر یا استیکر، پرامپت دقیق بده و اگر ابزار تولید تصویر جدا لازم است شفاف توضیح بده.",
       write_edit: "متن را با کیفیت بالا بنویس، اصلاح کن یا بازنویسی کن.",
-      web_guide: "موضوع را با توضیح شفاف و ساختاریافته بررسی کن؛ اگر نیاز به اطلاعات زنده اینترنتی باشد که در دسترس نیست، صادقانه بگو.",
-      camera: "بر اساس توضیح کاربر درباره صحنه یا سوژه دوربین، راهنمای دقیق و کاربردی بده.",
-      photos: "بر اساس توضیح کاربر درباره عکس، ایده، تحلیل یا پرامپت مناسب بده.",
-      files: "محتوای متنی‌ای که کاربر درباره فایل می‌فرستد را دقیق بررسی، خلاصه یا ویرایش کن.",
-      plugins: "راهکار عملی و مرحله‌به‌مرحله برای قابلیت یا ابزار مورد نظر ارائه بده.",
-      think: "مسئله را عمیق‌تر، مرحله‌به‌مرحله و با دقت بالا تحلیل کن و پاسخ جامع بده."
+      web_guide: "موضوع را با توضیح شفاف و منظم بررسی کن.",
+      camera: "بر اساس توضیح کاربر درباره صحنه دوربین، راهنمای دقیق بده.",
+      photos: "بر اساس توضیح کاربر درباره عکس، راهنما یا پرامپت مناسب بده.",
+      files: "محتوای متنی فایل را دقیق بررسی، خلاصه یا ویرایش کن.",
+      plugins: "راهکار عملی و مرحله‌به‌مرحله ارائه بده.",
+      think: "مسئله را عمیق‌تر و مرحله‌به‌مرحله تحلیل کن."
     };
 
     function setTool(toolKey) {
@@ -285,15 +395,12 @@
       }
     });
 
-    resetToolBtn.addEventListener("click", () => {
-      setTool("normal");
-    });
+    resetToolBtn.addEventListener("click", () => setTool("normal"));
 
     menuOpts.forEach((opt) => {
       opt.addEventListener("click", () => {
         const chosen = opt.dataset.tool;
         plusMenu.classList.remove("open");
-
         if (chosen === "camera") {
           filePicker.accept = "image/*";
           filePicker.setAttribute("capture", "environment");
@@ -315,7 +422,6 @@
           filePicker.click();
           return;
         }
-
         setTool(chosen);
         input.focus();
       });
@@ -435,10 +541,7 @@
         }
       }
 
-      if (inList) {
-        html += "</ul>";
-      }
-
+      if (inList) html += "</ul>";
       return html || "<p>پاسخی دریافت نشد.</p>";
     }
 
@@ -495,6 +598,223 @@
       };
     }
 
+    async function sendToParto(text) {
+      const recentHistory = history.slice(-8);
+      const payloadMessages = [...recentHistory, { role: "user", content: text }];
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: text,
+          messages: payloadMessages,
+          mode: currentTool,
+          modeInstruction: toolInstructions[currentTool] || ""
+        })
+      });
+      const data = await res.json();
+      return data.reply || "پاسخی دریافت نشد.";
+    }
+
+    // دکمه تبدیل صدا به متن کنار کادر چت
+    micBtn.addEventListener("click", () => {
+      if (!SpeechRecognition) {
+        alert("مرورگر شما از تبدیل صدا به متن پشتیبانی نمی‌کند. لطفاً از Chrome یا Edge استفاده کنید.");
+        return;
+      }
+
+      if (isDictating && dictRecognition) {
+        dictRecognition.stop();
+        return;
+      }
+
+      dictRecognition = new SpeechRecognition();
+      dictRecognition.lang = "fa-IR";
+      dictRecognition.interimResults = true;
+      dictRecognition.continuous = false;
+
+      isDictating = true;
+      micBtn.classList.add("recording");
+      const baseText = input.value ? input.value + " " : "";
+
+      dictRecognition.onresult = (event) => {
+        let transcript = "";
+        for (let i = 0; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        input.value = (baseText + transcript).trim();
+      };
+
+      dictRecognition.onerror = () => {
+        isDictating = false;
+        micBtn.classList.remove("recording");
+      };
+
+      dictRecognition.onend = () => {
+        isDictating = false;
+        micBtn.classList.remove("recording");
+        input.focus();
+      };
+
+      dictRecognition.start();
+    });
+
+    // مکالمه صوتی زنده پیوسته
+    function speakAndThenListen(replyText) {
+      if (!liveActive) return;
+
+      const cleanText = replyText.replace(/[#*_`]/g, "").trim();
+      liveStatus.textContent = "پرتو در حال صحبت است...";
+      liveOrb.classList.add("pulse");
+      liveTranscript.textContent = cleanText;
+
+      if ("speechSynthesis" in window && cleanText) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(cleanText);
+        utter.lang = "fa-IR";
+        utter.onend = () => {
+          liveOrb.classList.remove("pulse");
+          if (liveActive && !liveMuted) {
+            startLiveListening();
+          } else if (liveActive) {
+            liveStatus.textContent = "میکروفون بی‌صدا است";
+          }
+        };
+        utter.onerror = () => {
+          liveOrb.classList.remove("pulse");
+          if (liveActive && !liveMuted) startLiveListening();
+        };
+        window.speechSynthesis.speak(utter);
+      } else {
+        liveOrb.classList.remove("pulse");
+        if (liveActive && !liveMuted) startLiveListening();
+      }
+    }
+
+    function startLiveListening() {
+      if (!liveActive || liveMuted || liveBusy) return;
+      if (!SpeechRecognition) {
+        liveStatus.textContent = "تشخیص صدا در این مرورگر پشتیبانی نمی‌شود";
+        return;
+      }
+
+      try {
+        if (liveRecognition) {
+          try { liveRecognition.abort(); } catch {}
+        }
+        liveRecognition = new SpeechRecognition();
+        liveRecognition.lang = "fa-IR";
+        liveRecognition.interimResults = true;
+        liveRecognition.continuous = false;
+
+        liveStatus.textContent = "در حال گوش دادن... سوالت را بپرس";
+        liveOrb.classList.add("pulse");
+
+        let finalSpoken = "";
+        liveRecognition.onresult = (event) => {
+          let interim = "";
+          finalSpoken = "";
+          for (let i = 0; i < event.results.length; i++) {
+            const t = event.results[i][0].transcript;
+            if (event.results[i].isFinal) finalSpoken += t;
+            else interim += t;
+          }
+          liveTranscript.textContent = (finalSpoken || interim) || "...";
+        };
+
+        liveRecognition.onend = async () => {
+          liveOrb.classList.remove("pulse");
+          const spokenText = finalSpoken.trim();
+          if (!liveActive) return;
+
+          if (!spokenText) {
+            if (!liveMuted && !liveBusy) startLiveListening();
+            return;
+          }
+
+          liveBusy = true;
+          liveStatus.textContent = "پرتو در حال فکر کردن است...";
+          addUserMessage(spokenText);
+          const botMsg = createBotMessage("پرتو در حال پاسخ دادن است...");
+
+          try {
+            const reply = await sendToParto(spokenText);
+            history.push({ role: "user", content: spokenText });
+            history.push({ role: "assistant", content: reply });
+            botMsg.setReply(reply);
+            liveBusy = false;
+            speakAndThenListen(reply);
+          } catch {
+            liveBusy = false;
+            botMsg.setError("خطا در ارتباط با سرور.");
+            liveStatus.textContent = "خطا در ارتباط؛ دوباره گوش می‌دهم...";
+            if (!liveMuted) startLiveListening();
+          }
+        };
+
+        liveRecognition.onerror = () => {
+          liveOrb.classList.remove("pulse");
+          if (liveActive && !liveMuted && !liveBusy) {
+            setTimeout(() => startLiveListening(), 400);
+          }
+        };
+
+        liveRecognition.start();
+      } catch {
+        if (liveActive && !liveMuted && !liveBusy) {
+          setTimeout(() => startLiveListening(), 500);
+        }
+      }
+    }
+
+    function openLiveMode() {
+      if (!SpeechRecognition) {
+        alert("برای مکالمه صوتی زنده، صفحه را در مرورگر Chrome یا Edge باز کن.");
+        return;
+      }
+      if (isDictating && dictRecognition) dictRecognition.stop();
+      liveActive = true;
+      liveMuted = false;
+      liveBusy = false;
+      liveMuteBtn.classList.remove("muted");
+      liveMuteBtn.textContent = "🎤";
+      liveBtn.classList.add("live-active");
+      liveOverlay.classList.add("open");
+      liveTranscript.textContent = "حرف بزنید تا پرتو جواب دهد و دوباره گوش کند.";
+      startLiveListening();
+    }
+
+    function closeLiveMode() {
+      liveActive = false;
+      liveBusy = false;
+      liveBtn.classList.remove("live-active");
+      liveOverlay.classList.remove("open");
+      liveOrb.classList.remove("pulse");
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+      if (liveRecognition) {
+        try { liveRecognition.abort(); } catch {}
+        liveRecognition = null;
+      }
+    }
+
+    liveBtn.addEventListener("click", openLiveMode);
+    liveCloseBtn.addEventListener("click", closeLiveMode);
+
+    liveMuteBtn.addEventListener("click", () => {
+      liveMuted = !liveMuted;
+      if (liveMuted) {
+        liveMuteBtn.classList.add("muted");
+        liveMuteBtn.textContent = "🔇";
+        liveStatus.textContent = "میکروفون بی‌صدا است";
+        if (liveRecognition) {
+          try { liveRecognition.abort(); } catch {}
+        }
+      } else {
+        liveMuteBtn.classList.remove("muted");
+        liveMuteBtn.textContent = "🎤";
+        startLiveListening();
+      }
+    });
+
     clearBtn.addEventListener("click", () => {
       chat.innerHTML = "";
       history = [];
@@ -518,25 +838,8 @@
       addUserMessage(text);
       const botMsg = createBotMessage("پرتو در حال پاسخ دادن است...");
 
-      const recentHistory = history.slice(-8);
-      const payloadMessages = [
-        ...recentHistory,
-        { role: "user", content: text }
-      ];
-
       try {
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            message: text,
-            messages: payloadMessages,
-            mode: currentTool,
-            modeInstruction: toolInstructions[currentTool] || ""
-          })
-        });
-        const data = await res.json();
-        const reply = data.reply || "پاسخی دریافت نشد.";
+        const reply = await sendToParto(text);
         botMsg.setReply(reply);
         history.push({ role: "user", content: text });
         history.push({ role: "assistant", content: reply });
