@@ -9,9 +9,14 @@
     body { margin: 0; background: #0f172a; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; }
     header { padding: 14px 18px; background: #1e293b; border-bottom: 1px solid #334155; font-weight: bold; }
     #chat { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
-    .msg { max-width: 85%; padding: 12px 14px; border-radius: 12px; white-space: pre-wrap; line-height: 1.6; }
-    .user { align-self: flex-start; background: #2563eb; color: #fff; }
+    .msg { max-width: 85%; padding: 12px 14px; border-radius: 12px; line-height: 1.75; word-wrap: break-word; }
+    .user { align-self: flex-start; background: #2563eb; color: #fff; white-space: pre-wrap; }
     .bot { align-self: flex-end; background: #1e293b; border: 1px solid #334155; }
+    .bot p { margin: 0 0 8px 0; }
+    .bot p:last-child { margin-bottom: 0; }
+    .bot h3, .bot h4 { margin: 10px 0 6px 0; color: #38bdf8; font-size: 1rem; }
+    .bot ul { margin: 4px 0 8px 0; padding-right: 20px; }
+    .bot li { margin-bottom: 4px; }
     form { display: flex; gap: 8px; padding: 12px; background: #1e293b; border-top: 1px solid #334155; }
     textarea { flex: 1; resize: none; height: 48px; padding: 10px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; }
     button { padding: 0 18px; border: none; border-radius: 8px; background: #22c55e; color: #052e16; font-weight: bold; cursor: pointer; }
@@ -29,10 +34,71 @@
     const form = document.getElementById("form");
     const input = document.getElementById("input");
 
-    function addMsg(text, cls) {
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function formatBotText(raw) {
+      const safe = escapeHtml(raw || "");
+      const lines = safe.split("\n");
+      let html = "";
+      let inList = false;
+
+      for (let line of lines) {
+        let trimmed = line.trim();
+
+        if (!trimmed) {
+          if (inList) {
+            html += "</ul>";
+            inList = false;
+          }
+          continue;
+        }
+
+        trimmed = trimmed.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+
+        if (/^#{1,6}\s+/.test(trimmed)) {
+          if (inList) {
+            html += "</ul>";
+            inList = false;
+          }
+          const headingText = trimmed.replace(/^#{1,6}\s+/, "");
+          html += `<h3>${headingText}</h3>`;
+        } else if (/^[-*•]\s+/.test(trimmed)) {
+          if (!inList) {
+            html += "<ul>";
+            inList = true;
+          }
+          const itemText = trimmed.replace(/^[-*•]\s+/, "");
+          html += `<li>${itemText}</li>`;
+        } else {
+          if (inList) {
+            html += "</ul>";
+            inList = false;
+          }
+          html += `<p>${trimmed}</p>`;
+        }
+      }
+
+      if (inList) {
+        html += "</ul>";
+      }
+
+      return html || "<p>پاسخی دریافت نشد.</p>";
+    }
+
+    function addMsg(text, cls, isHtml = false) {
       const div = document.createElement("div");
       div.className = "msg " + cls;
-      div.textContent = text;
+      if (isHtml) {
+        div.innerHTML = text;
+      } else {
+        div.textContent = text;
+      }
       chat.appendChild(div);
       chat.scrollTop = chat.scrollHeight;
       return div;
@@ -43,8 +109,8 @@
       const text = input.value.trim();
       if (!text) return;
       input.value = "";
-      addMsg(text, "user");
-      const loading = addMsg("در حال فکر کردن...", "bot");
+      addMsg(text, "user", false);
+      const loading = addMsg("در حال فکر کردن...", "bot", false);
 
       try {
         const res = await fetch("/api/chat", {
@@ -53,9 +119,9 @@
           body: JSON.stringify({ message: text })
         });
         const data = await res.json();
-        loading.textContent = data.reply || "پاسخی دریافت نشد.";
+        loading.innerHTML = formatBotText(data.reply || "پاسخی دریافت نشد.");
       } catch {
-        loading.textContent = "خطا در ارتباط با سرور محلی.";
+        loading.textContent = "خطا در ارتباط با سرور.";
       }
     });
   </script>
