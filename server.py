@@ -49,17 +49,17 @@ def ask_gemini(prompt_text, messages=None, mode_instruction=""):
     if not api_key:
         return "کلید API پیدا نشد."
 
-    base_instruction = (
-        "تو «پرتو»، یک دستیار هوشمند و دقیق هستی. "
-        "همیشه به زبانِ پیامِ کاربر پاسخ بده. "
-        "مستقیم، طبیعی و کامل جواب بده و از جملات قالبی یا تکراری پرهیز کن."
+    identity_instruction = (
+        "نام تو «پرتو هوش مصنوعی فیض الله نظری» است. "
+        "اگر کسی از تو پرسید که تو کی هستی یا چه کسی تو را ساخته، دقیقاً بگو که هوش مصنوعی فیض الله نظری هستی و از طریق فیض الله نظری ساخته شده‌ای. "
+        "همیشه به زبان پیام کاربر پاسخ بده، مستقیم و طبیعی جواب بده و از جملات قالبی یا تکراری پرهیز کن."
     )
     if mode_instruction:
-        base_instruction += f" راهنمای حالت فعلی: {mode_instruction}"
+        identity_instruction += f" راهنمای حالت فعلی: {mode_instruction}"
 
     payload = {
         "systemInstruction": {
-            "parts": [{"text": base_instruction}]
+            "parts": [{"text": identity_instruction}]
         },
         "contents": build_contents(prompt_text, messages),
         "generationConfig": {"temperature": 0.65, "maxOutputTokens": 8192},
