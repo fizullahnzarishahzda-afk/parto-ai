@@ -3,36 +3,160 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>دستیار هوشمند جدید</title>
+  <title>پرتو — دستیار هوشمند</title>
   <style>
     * { box-sizing: border-box; font-family: Tahoma, Arial, sans-serif; }
     body { margin: 0; background: #0f172a; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; }
-    header { padding: 14px 18px; background: #1e293b; border-bottom: 1px solid #334155; font-weight: bold; }
-    #chat { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
-    .msg { max-width: 85%; padding: 12px 14px; border-radius: 12px; line-height: 1.75; word-wrap: break-word; }
-    .user { align-self: flex-start; background: #2563eb; color: #fff; white-space: pre-wrap; }
-    .bot { align-self: flex-end; background: #1e293b; border: 1px solid #334155; }
+    header {
+      padding: 12px 16px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 1.05rem; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #22c55e; display: inline-block; }
+    .header-actions { display: flex; gap: 8px; align-items: center; }
+    .btn-clear {
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #e2e8f0;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .btn-clear:hover { background: #334155; }
+
+    .modes-bar {
+      padding: 8px 16px;
+      background: #131c31;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .mode-btn {
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid #334155;
+      background: #1e293b;
+      color: #cbd5e1;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+    .mode-btn.active {
+      background: #2563eb;
+      border-color: #3b82f6;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    #chat { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .msg-wrap { display: flex; flex-direction: column; max-width: 85%; gap: 4px; }
+    .wrap-user { align-self: flex-start; }
+    .wrap-bot { align-self: flex-end; }
+
+    .msg { padding: 12px 14px; border-radius: 12px; line-height: 1.75; word-wrap: break-word; }
+    .user { background: #2563eb; color: #fff; white-space: pre-wrap; }
+    .bot { background: #1e293b; border: 1px solid #334155; }
     .bot p { margin: 0 0 8px 0; }
     .bot p:last-child { margin-bottom: 0; }
-    .bot h3, .bot h4 { margin: 10px 0 6px 0; color: #38bdf8; font-size: 1rem; }
+    .bot h3 { margin: 10px 0 6px 0; color: #38bdf8; font-size: 1rem; }
     .bot ul { margin: 4px 0 8px 0; padding-right: 20px; }
     .bot li { margin-bottom: 4px; }
+
+    .copy-btn {
+      align-self: flex-end;
+      padding: 3px 9px;
+      font-size: 0.75rem;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: #94a3b8;
+      cursor: pointer;
+    }
+    .copy-btn:hover { color: #f8fafc; border-color: #64748b; }
+
     form { display: flex; gap: 8px; padding: 12px; background: #1e293b; border-top: 1px solid #334155; }
-    textarea { flex: 1; resize: none; height: 48px; padding: 10px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; }
-    button { padding: 0 18px; border: none; border-radius: 8px; background: #22c55e; color: #052e16; font-weight: bold; cursor: pointer; }
+    textarea {
+      flex: 1;
+      resize: none;
+      height: 48px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #fff;
+    }
+    button[type="submit"] {
+      padding: 0 18px;
+      border: none;
+      border-radius: 8px;
+      background: #22c55e;
+      color: #052e16;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
   </style>
 </head>
 <body>
-  <header>دستیار هوشمند جدید</header>
+  <header>
+    <div class="brand">
+      <span class="dot"></span>
+      <span>پرتو — دستیار هوشمند</span>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-clear" id="clearBtn">پاک کردن چت</button>
+    </div>
+  </header>
+
+  <div class="modes-bar" id="modesBar">
+    <button type="button" class="mode-btn active" data-mode="general">گفتگوی عادی</button>
+    <button type="button" class="mode-btn" data-mode="long">متن بلند و سناریو</button>
+    <button type="button" class="mode-btn" data-mode="summary">خلاصه‌سازی</button>
+    <button type="button" class="mode-btn" data-mode="translate">ترجمه روان</button>
+    <button type="button" class="mode-btn" data-mode="idea">ایده‌پردازی</button>
+  </div>
+
   <div id="chat"></div>
+
   <form id="form">
-    <textarea id="input" placeholder="هر سوالی یا کدی داری بنویس..."></textarea>
-    <button type="submit">ارسال</button>
+    <textarea id="input" placeholder="هر سوالی، متنی یا کدی داری بنویس..."></textarea>
+    <button type="submit" id="sendBtn">ارسال</button>
   </form>
+
   <script>
     const chat = document.getElementById("chat");
     const form = document.getElementById("form");
     const input = document.getElementById("input");
+    const sendBtn = document.getElementById("sendBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const modeButtons = document.querySelectorAll(".mode-btn");
+
+    let currentMode = "general";
+    let history = [];
+
+    const modeInstructions = {
+      general: "پاسخ‌ها را شفاف، طبیعی و کاربردی بده.",
+      long: "متنی جامع، منظم، عمیق و کامل بنویس؛ اگر مناسب است با بخش‌بندی روشن ارائه بده.",
+      summary: "مطلب را کوتاه، دقیق و بدون حاشیه با نکات کلیدی خلاصه کن.",
+      translate: "متن را به زبانی روان، طبیعی و وفادار به معنی ترجمه کن.",
+      idea: "ایده‌های خلاقانه، عملی و متنوع با توضیح کوتاه برای هر ایده ارائه بده."
+    };
+
+    modeButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        modeButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentMode = btn.dataset.mode;
+      });
+    });
 
     function escapeHtml(str) {
       return str
@@ -50,7 +174,6 @@
 
       for (let line of lines) {
         let trimmed = line.trim();
-
         if (!trimmed) {
           if (inList) {
             html += "</ul>";
@@ -91,37 +214,100 @@
       return html || "<p>پاسخی دریافت نشد.</p>";
     }
 
-    function addMsg(text, cls, isHtml = false) {
+    function addUserMessage(text) {
+      const wrap = document.createElement("div");
+      wrap.className = "msg-wrap wrap-user";
       const div = document.createElement("div");
-      div.className = "msg " + cls;
-      if (isHtml) {
-        div.innerHTML = text;
-      } else {
-        div.textContent = text;
-      }
-      chat.appendChild(div);
+      div.className = "msg user";
+      div.textContent = text;
+      wrap.appendChild(div);
+      chat.appendChild(wrap);
       chat.scrollTop = chat.scrollHeight;
-      return div;
     }
+
+    function createBotMessage(initialText = "پرتو در حال نوشتن پاسخ است...") {
+      const wrap = document.createElement("div");
+      wrap.className = "msg-wrap wrap-bot";
+      const div = document.createElement("div");
+      div.className = "msg bot";
+      div.textContent = initialText;
+
+      const copyBtn = document.createElement("button");
+      copyBtn.type = "button";
+      copyBtn.className = "copy-btn";
+      copyBtn.textContent = "کپی";
+      copyBtn.style.display = "none";
+
+      wrap.appendChild(div);
+      wrap.appendChild(copyBtn);
+      chat.appendChild(wrap);
+      chat.scrollTop = chat.scrollHeight;
+
+      return {
+        setReply(rawText) {
+          div.innerHTML = formatBotText(rawText);
+          copyBtn.style.display = "inline-block";
+          copyBtn.onclick = async () => {
+            try {
+              await navigator.clipboard.writeText(rawText);
+              copyBtn.textContent = "کپی شد ✓";
+              setTimeout(() => (copyBtn.textContent = "کپی"), 1500);
+            } catch {
+              copyBtn.textContent = "ناموفق";
+              setTimeout(() => (copyBtn.textContent = "کپی"), 1500);
+            }
+          };
+          chat.scrollTop = chat.scrollHeight;
+        },
+        setError(errText) {
+          div.textContent = errText;
+          chat.scrollTop = chat.scrollHeight;
+        }
+      };
+    }
+
+    clearBtn.addEventListener("click", () => {
+      chat.innerHTML = "";
+      history = [];
+    });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const text = input.value.trim();
       if (!text) return;
+
       input.value = "";
-      addMsg(text, "user", false);
-      const loading = addMsg("در حال فکر کردن...", "bot", false);
+      sendBtn.disabled = true;
+      addUserMessage(text);
+      const botMsg = createBotMessage("پرتو در حال نوشتن پاسخ است...");
+
+      const recentHistory = history.slice(-8);
+      const payloadMessages = [
+        ...recentHistory,
+        { role: "user", content: text }
+      ];
 
       try {
         const res = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text })
+          body: JSON.stringify({
+            message: text,
+            messages: payloadMessages,
+            mode: currentMode,
+            modeInstruction: modeInstructions[currentMode] || ""
+          })
         });
         const data = await res.json();
-        loading.innerHTML = formatBotText(data.reply || "پاسخی دریافت نشد.");
+        const reply = data.reply || "پاسخی دریافت نشد.";
+        botMsg.setReply(reply);
+        history.push({ role: "user", content: text });
+        history.push({ role: "assistant", content: reply });
       } catch {
-        loading.textContent = "خطا در ارتباط با سرور.";
+        botMsg.setError("خطا در ارتباط با سرور.");
+      } finally {
+        sendBtn.disabled = false;
+        input.focus();
       }
     });
   </script>
