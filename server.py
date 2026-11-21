@@ -10,17 +10,21 @@ BASE_DIR = Path(__file__).resolve().parent
 HOST = "0.0.0.0"
 PORT = int(os.environ.get("PORT", "8000"))
 
-PRIMARY_MODEL = (os.environ.get("GEMINI_MODEL") or "gemini-3.8-flash").strip()
-FALLBACK_MODELS = ["gemini-3.8-pro", "gemini-3.8-flash"]
+ENV_MODEL = (os.environ.get("GEMINI_MODEL") or "").strip()
+MODEL_PRIORITY = [
+    "gemini-3.8-flash-lite",
+    "gemini-3.8-flash",
+    "gemini-3.8-pro",
+]
 
 
 def get_candidate_models() -> list[str]:
-    models = []
-    for m in [PRIMARY_MODEL] + FALLBACK_MODELS:
+    ordered = []
+    for m in MODEL_PRIORITY + ([ENV_MODEL] if ENV_MODEL else []):
         clean = (m or "").strip()
-        if clean and clean not in models:
-            models.append(clean)
-    return models
+        if clean and clean not in ordered:
+            ordered.append(clean)
+    return ordered
 
 
 def load_api_key() -> str:
@@ -89,7 +93,7 @@ def ask_gemini(
 
     for model_name in models:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
-        for attempt in range(2):
+        for _ in range(2):
             req = urllib.request.Request(
                 url,
                 data=encoded_payload,
@@ -97,7 +101,7 @@ def ask_gemini(
                 method="POST",
             )
             try:
-                with urllib.request.urlopen(req, timeout=90) as resp:
+                with urllib.request.urlopen(req, timeout=45) as resp:
                     raw = resp.read().decode("utf-8")
                     parsed = json.loads(raw)
                     candidates = parsed.get("candidates") or []
@@ -123,12 +127,12 @@ def ask_gemini(
                     pass
                 last_error = f"خطای سرویس جمنای ({e.code}): {err_body[:300]}"
                 if e.code in (429, 500, 502, 503, 504):
-                    time.sleep(1.5)
+                    time.sleep(1.0)
                     continue
                 break
             except Exception as e:
                 last_error = f"خطا در ارتباط با سرویس هوش مصنوعی: {str(e)[:250]}"
-                time.sleep(1.5)
+                time.sleep(1.0)
                 continue
 
     return last_error
