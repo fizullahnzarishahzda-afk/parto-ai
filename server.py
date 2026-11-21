@@ -3,151 +3,177 @@ import os
 import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent
 HOST = "0.0.0.0"
-PORT = int(os.environ.get("PORT", "8090"))
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-MODELS = [
-    "gemini-flash-latest",
-    "gemini-2.5-flash-lite",
-    "gemini-flash-lite-latest",
-]
+PORT = int(os.environ.get("PORT", "8000"))
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 
 
-def load_api_key():
-    env_key = os.environ.get("GEMINI_API_KEY", "").strip()
+def load_api_key() -> str:
+    env_key = (os.environ.get("GEMINI_API_KEY") or "").strip()
     if env_key:
         return env_key
-    key_file = os.path.join(BASE_DIR, "key.txt")
-    if os.path.exists(key_file):
-        with open(key_file, "r", encoding="utf-8") as f:
-            return f.read().strip()
+    key_file = BASE_DIR / "key.txt"
+    if key_file.exists():
+        return key_file.read_text(encoding="utf-8").strip()
     return ""
 
 
-def build_contents(prompt_text, messages):
-    contents = []
-    if isinstance(messages, list) and messages:
-        for m in messages[-8:]:
-            if not isinstance(m, dict):
-                continue
-            role = m.get("role")
-            content = str(m.get("content") or "").strip()
-            if not content:
-                continue
-            gemini_role = "model" if role in ("assistant", "model") else "user"
-            contents.append({"role": gemini_role, "parts": [{"text": content}]})
-
-    if not contents:
-        contents.append({"role": "user", "parts": [{"text": prompt_text or "سلام"}]})
-    return contents
-
-
-def ask_gemini(prompt_text, messages=None, mode_instruction=""):
+def ask_gemini(
+    prompt: str,
+    messages: list | None = None,
+    mode_instruction: str = "",
+    media_base64: str = "",
+    media_mime_type: str = "",
+) -> str:
     api_key = load_api_key()
     if not api_key:
-        return "کلید API پیدا نشد."
+        return "کلید API در key.txt یا متغیر محیطی پیدا نشد."
 
-    identity_instruction = (
-        "نام تو «پرتو هوش مصنوعی (نظری)» است. "
-        "اگر کسی از تو پرسید که تو کی هستی یا چه کسی تو را ساخته، دقیقاً بگو که هوش مصنوعی فیض الله نظری هستی و از طریق فیض الله نظری ساخته شده‌ای. "
-        "همیشه به زبان پیام کاربر پاسخ بده، مستقیم و طبیعی جواب بده و از جملات قالبی یا تکراری پرهیز کن."
-    )
+    system_parts = [
+        "تو «پرتو هوش مصنوعی (نظری)» هستی؛ دستیار فارسی‌زبان، صمیمی، دقیق و مفید.",
+        "اگر کاربر عکس یا ویدیو فرستاد، حتماً محتوای آن را با دقت بررسی کن و پاسخ بده.",
+    ]
     if mode_instruction:
-        identity_instruction += f" راهنمای حالت فعلی: {mode_instruction}"
+        system_parts.append(f"راهنمای حالت فعلی: {mode_instruction}")
+
+    contents = []
+    history = messages if isinstance(messages, list) else []
+
+    for item in history[:-1]:
+        if not isinstance(item, dict):
+            continue
+        role = "model" if item.get("role") == "assistant" else "user"
+        txt = str(item.get("content") or "").strip()
+        if txt:
+            contents.append({"role": role, "parts": [{"text": txt}]})
+
+    final_parts = []
+    clean_b64 = (media_base64 or "").strip()
+    clean_mime = (media_mime_type or "").strip()
+    if clean_b64 and clean_mime:
+        if "," in clean_b64:
+            clean_b64 = clean_b64.split(",", 1)[1]
+        final_parts.append({
+            "inline_data": {
+                "mime_type": clean_mime,
+                "data": clean_b64,
+            }
+        })
+
+    final_parts.append({"text": prompt or "سلام"})
+    contents.append({"role": "user", "parts": final_parts})
 
     payload = {
-        "systemInstruction": {
-            "parts": [{"text": identity_instruction}]
-        },
-        "contents": build_contents(prompt_text, messages),
-        "generationConfig": {"temperature": 0.65, "maxOutputTokens": 8192},
+        "system_instruction": {"parts": [{"text": "\n".join(system_parts)}]},
+        "contents": contents,
     }
-    raw_body = json.dumps(payload).encode("utf-8")
 
-    for model in MODELS:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={api_key}"
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=90) as resp:
+            raw = resp.read().decode("utf-8")
+            parsed = json.loads(raw)
+            candidates = parsed.get("candidates") or []
+            if not candidates:
+                return "پاسخی از مدل دریافت نشد."
+            parts = ((candidates[0].get("content") or {}).get("parts")) or []
+            texts = [p.get("text", "") for p in parts if isinstance(p, dict) and p.get("text")]
+            return "\n".join(texts).strip() or "پاسخی از مدل دریافت نشد."
+    except urllib.error.HTTPError as e:
+        err_body = ""
         try:
-            req = urllib.request.Request(
-                url,
-                data=raw_body,
-                headers={"Content-Type": "application/json"},
-                method="POST",
-            )
-            with urllib.request.urlopen(req, timeout=60) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-                candidates = data.get("candidates") or []
-                if candidates:
-                    parts = ((candidates[0].get("content") or {}).get("parts")) or []
-                    text = "".join(p.get("text", "") for p in parts if isinstance(p, dict)).strip()
-                    if text:
-                        return text
-        except urllib.error.HTTPError as e:
-            if e.code in (400, 401, 403):
-                return f"خطای کلید یا دسترسی ({e.code}). لطفاً کلید API را بررسی کن."
+            err_body = e.read().decode("utf-8", errors="ignore")
         except Exception:
-            continue
-
-    return "الان اتصال به هوش مصنوعی برقرار نشد. اینترنت یا کلید را چک کن و دوباره بپرس."
+            pass
+        return f"خطای سرویس جمنای ({e.code}): {err_body[:300]}"
+    except Exception as e:
+        return f"خطا در ارتباط با سرویس هوش مصنوعی: {str(e)[:250]}"
 
 
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, format, *args):
-        return
+        pass
 
-    def send_json(self, code, payload):
-        try:
-            body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-            self.send_response(code)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Content-Length", str(len(body)))
+    def send_json(self, status_code: int, obj: dict):
+        body = json.dumps(obj, ensure_ascii=False).encode("utf-8")
+        self.send_response(status_code)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def send_file(self, filename: str, content_type: str):
+        file_path = BASE_DIR / filename
+        if not file_path.exists():
+            self.send_response(404)
             self.end_headers()
-            self.wfile.write(body)
-        except (ConnectionAbortedError, ConnectionResetError, BrokenPipeError, OSError):
-            pass
+            self.wfile.write(b"Not Found")
+            return
+        data = file_path.read_bytes()
+        self.send_response(200)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
 
     def do_GET(self):
-        if self.path in ("/", "/index.html"):
-            html_file = os.path.join(BASE_DIR, "index.html")
-            if not os.path.exists(html_file):
-                self.send_json(404, {"reply": "index.html پیدا نشد."})
-                return
-            try:
-                with open(html_file, "rb") as f:
-                    data = f.read()
-                self.send_response(200)
-                self.send_header("Content-Type", "text/html; charset=utf-8")
-                self.send_header("Content-Length", str(len(data)))
-                self.end_headers()
-                self.wfile.write(data)
-            except (ConnectionAbortedError, ConnectionResetError, BrokenPipeError, OSError):
-                pass
-            return
-        self.send_json(404, {"reply": "مسیر پیدا نشد."})
+        path = self.path.split("?", 1)[0]
+        if path in ("/", "/index.html"):
+            self.send_file("index.html", "text/html; charset=utf-8")
+        elif path == "/manifest.json":
+            self.send_file("manifest.json", "application/manifest+json; charset=utf-8")
+        else:
+            self.send_response(404)
+            self.end_headers()
+            self.wfile.write(b"Not Found")
 
     def do_POST(self):
-        if self.path != "/api/chat":
+        path = self.path.split("?", 1)[0]
+        if path != "/api/chat":
             self.send_json(404, {"reply": "مسیر پیدا نشد."})
             return
+
         try:
-            length = int(self.headers.get("Content-Length", "0") or "0")
-            raw = self.rfile.read(length) if length > 0 else b"{}"
-            obj = json.loads(raw.decode("utf-8") or "{}")
-            prompt = str(obj.get("message") or "").strip()
-            messages = obj.get("messages") if isinstance(obj.get("messages"), list) else []
-            mode_instruction = str(obj.get("modeInstruction") or "").strip()
+            content_len = int(self.headers.get("Content-Length", "0"))
+            raw_body = self.rfile.read(content_len) if content_len > 0 else b"{}"
+            data = json.loads(raw_body.decode("utf-8"))
+        except Exception:
+            self.send_json(400, {"reply": "فرمت درخواست نامعتبر است."})
+            return
 
-            if not prompt and messages:
-                for m in reversed(messages):
-                    if isinstance(m, dict) and m.get("role") == "user":
-                        prompt = str(m.get("content") or "").strip()
-                        break
+        messages = data.get("messages") if isinstance(data.get("messages"), list) else []
+        mode_instruction = str(data.get("modeInstruction") or "").strip()
+        media_base64 = str(data.get("mediaBase64") or "").strip()
+        media_mime_type = str(data.get("mediaMimeType") or "").strip()
+        prompt = str(data.get("message") or "").strip()
 
-            reply = ask_gemini(prompt or "سلام", messages=messages, mode_instruction=mode_instruction)
+        if not prompt:
+            for m in reversed(messages):
+                if isinstance(m, dict) and m.get("role") == "user":
+                    prompt = str(m.get("content") or "").strip()
+                    break
+
+        try:
+            reply = ask_gemini(
+                prompt or "سلام",
+                messages=messages,
+                mode_instruction=mode_instruction,
+                media_base64=media_base64,
+                media_mime_type=media_mime_type,
+            )
             self.send_json(200, {"reply": reply})
         except Exception:
-            self.send_json(200, {"reply": "مشکلی در پردازش پیام پیش آمد."})
+            self.send_json(200, {"reply": "أول پیش برش بدار در کلک میشه."})
 
 
 if __name__ == "__main__":
