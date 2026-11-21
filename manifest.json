@@ -1,0 +1,16 @@
+{
+  "name": "پرتو هوش مصنوعی (نظری)",
+  "short_name": "پرتو AI",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b1324",
+  "theme_color": "#132238",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://parto-ai.onrender.com",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
