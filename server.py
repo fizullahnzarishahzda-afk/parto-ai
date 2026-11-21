@@ -1,5 +1,6 @@
 import json
 import os
+import time
 import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -8,7 +9,18 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent
 HOST = "0.0.0.0"
 PORT = int(os.environ.get("PORT", "8000"))
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
+
+PRIMARY_MODEL = (os.environ.get("GEMINI_MODEL") or "gemini-3.8-flash").strip()
+FALLBACK_MODELS = ["gemini-3.8-pro", "gemini-3.8-flash"]
+
+
+def get_candidate_models() -> list[str]:
+    models = []
+    for m in [PRIMARY_MODEL] + FALLBACK_MODELS:
+        clean = (m or "").strip()
+        if clean and clean not in models:
+            models.append(clean)
+    return models
 
 
 def load_api_key() -> str:
@@ -70,34 +82,56 @@ def ask_gemini(
         "system_instruction": {"parts": [{"text": "\n".join(system_parts)}]},
         "contents": contents,
     }
+    encoded_payload = json.dumps(payload).encode("utf-8")
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={api_key}"
-    req = urllib.request.Request(
-        url,
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
+    last_error = "پاسخی از مدل دریافت نشد."
+    models = get_candidate_models()
 
-    try:
-        with urllib.request.urlopen(req, timeout=90) as resp:
-            raw = resp.read().decode("utf-8")
-            parsed = json.loads(raw)
-            candidates = parsed.get("candidates") or []
-            if not candidates:
-                return "پاسخی از مدل دریافت نشد."
-            parts = ((candidates[0].get("content") or {}).get("parts")) or []
-            texts = [p.get("text", "") for p in parts if isinstance(p, dict) and p.get("text")]
-            return "\n".join(texts).strip() or "پاسخی از مدل دریافت نشد."
-    except urllib.error.HTTPError as e:
-        err_body = ""
-        try:
-            err_body = e.read().decode("utf-8", errors="ignore")
-        except Exception:
-            pass
-        return f"خطای سرویس جمنای ({e.code}): {err_body[:300]}"
-    except Exception as e:
-        return f"خطا در ارتباط با سرویس هوش مصنوعی: {str(e)[:250]}"
+    for model_name in models:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+        for attempt in range(2):
+            req = urllib.request.Request(
+                url,
+                data=encoded_payload,
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=90) as resp:
+                    raw = resp.read().decode("utf-8")
+                    parsed = json.loads(raw)
+                    candidates = parsed.get("candidates") or []
+                    if not candidates:
+                        last_error = "پاسخی از مدل دریافت نشد."
+                        break
+                    parts = ((candidates[0].get("content") or {}).get("parts")) or []
+                    texts = [
+                        p.get("text", "")
+                        for p in parts
+                        if isinstance(p, dict) and p.get("text")
+                    ]
+                    reply_text = "\n".join(texts).strip()
+                    if reply_text:
+                        return reply_text
+                    last_error = "پاسخی از مدل دریافت نشد."
+                    break
+            except urllib.error.HTTPError as e:
+                err_body = ""
+                try:
+                    err_body = e.read().decode("utf-8", errors="ignore")
+                except Exception:
+                    pass
+                last_error = f"خطای سرویس جمنای ({e.code}): {err_body[:300]}"
+                if e.code in (429, 500, 502, 503, 504):
+                    time.sleep(1.5)
+                    continue
+                break
+            except Exception as e:
+                last_error = f"خطا در ارتباط با سرویس هوش مصنوعی: {str(e)[:250]}"
+                time.sleep(1.5)
+                continue
+
+    return last_error
 
 
 class Handler(BaseHTTPRequestHandler):
