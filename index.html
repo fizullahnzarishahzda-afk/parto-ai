@@ -2,14 +2,29 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#132238" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="پرتو AI" />
+  <link rel="manifest" href="/manifest.json" />
   <title>پرتو هوش مصنوعی (نظری)</title>
   <style>
-    * { box-sizing: border-box; font-family: Tahoma, Arial, sans-serif; }
-    body { margin: 0; background: #0b1324; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    * { box-sizing: border-box; font-family: Tahoma, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #0b1324;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      width: 100%;
+      overflow: hidden;
+    }
 
     header {
-      padding: 12px 14px;
+      padding: calc(10px + env(safe-area-inset-top)) 14px 10px 14px;
       background: linear-gradient(90deg, #132238 0%, #172a46 100%);
       border-bottom: 1px solid #284166;
       display: flex;
@@ -43,7 +58,7 @@
 
     .three-dots-menu {
       position: absolute;
-      top: 44px;
+      top: 48px;
       left: 0;
       width: 255px;
       background: #132238;
@@ -95,7 +110,7 @@
       right: -290px;
       width: 280px;
       max-width: 82vw;
-      height: 100vh;
+      height: 100dvh;
       background: #0f1b30;
       border-left: 1px solid #284166;
       display: flex;
@@ -162,7 +177,7 @@
       padding: 0;
     }
 
-    #chat { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    #chat { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
 
     .welcome-box {
       margin: auto;
@@ -171,12 +186,12 @@
       background: linear-gradient(180deg, #132238 0%, #101d32 100%);
       border: 1px solid #2c4770;
       border-radius: 16px;
-      padding: 20px 16px;
+      padding: 18px 14px;
       text-align: center;
       box-shadow: 0 10px 28px rgba(2, 8, 23, 0.45);
     }
     .welcome-title { font-size: 1.08rem; font-weight: bold; color: #38bdf8; margin-bottom: 10px; }
-    .welcome-text { font-size: 0.95rem; line-height: 1.85; color: #f1f5f9; margin-bottom: 16px; }
+    .welcome-text { font-size: 0.95rem; line-height: 1.85; color: #f1f5f9; margin-bottom: 14px; }
 
     .quick-actions { display: flex; flex-direction: column; gap: 8px; align-items: center; }
     .quick-item {
@@ -189,11 +204,10 @@
       color: #e0f2fe;
       font-size: 0.88rem;
       cursor: pointer;
-      transition: background 0.15s ease, border-color 0.15s ease;
     }
     .quick-item:hover { background: #162946; border-color: #38bdf8; }
 
-    .msg-wrap { display: flex; flex-direction: column; max-width: 85%; gap: 4px; }
+    .msg-wrap { display: flex; flex-direction: column; max-width: 86%; gap: 4px; }
     .wrap-user { align-self: flex-start; }
     .wrap-bot { align-self: flex-end; }
 
@@ -205,6 +219,15 @@
     .bot h3 { margin: 10px 0 6px 0; color: #38bdf8; font-size: 1rem; }
     .bot ul { margin: 4px 0 8px 0; padding-right: 20px; }
     .bot li { margin-bottom: 4px; }
+
+    .media-preview {
+      max-width: 240px;
+      max-height: 220px;
+      border-radius: 10px;
+      margin-top: 8px;
+      display: block;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
 
     .copy-btn {
       align-self: flex-end;
@@ -218,9 +241,22 @@
     }
     .copy-btn:hover { color: #fff; border-color: #38bdf8; }
 
+    .attachment-bar {
+      display: none;
+      padding: 6px 12px;
+      background: #0f1c30;
+      border-top: 1px solid #284166;
+      font-size: 0.8rem;
+      color: #7dd3fc;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .attachment-bar.active { display: flex; }
+
     .plus-menu {
       position: fixed;
-      bottom: 74px;
+      bottom: calc(74px + env(safe-area-inset-bottom));
       right: 16px;
       width: 230px;
       background: #132238;
@@ -249,19 +285,19 @@
     form {
       display: flex;
       gap: 6px;
-      padding: 10px 12px;
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom)) 10px;
       background: #132238;
       border-top: 1px solid #284166;
       align-items: center;
     }
     .icon-btn {
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       border: 1px solid #355480;
       background: #0b1324;
       color: #e0f2fe;
-      font-size: 1.05rem;
+      font-size: 1rem;
       cursor: pointer;
       flex-shrink: 0;
       display: flex;
@@ -269,13 +305,13 @@
       justify-content: center;
     }
     .icon-btn:hover { background: #1e3a5f; border-color: #38bdf8; }
-    .icon-btn.recording, .icon-btn.live-active { background: #0284c7; border-color: #38bdf8; color: #fff; }
+    .icon-btn.recording, .icon-btn.live-active { background: #ef4444; border-color: #fca5a5; color: #fff; }
 
     textarea {
       flex: 1;
       resize: none;
-      height: 44px;
-      padding: 9px 10px;
+      height: 42px;
+      padding: 8px 10px;
       border-radius: 10px;
       border: 1px solid #355480;
       background: #0b1324;
@@ -284,8 +320,8 @@
     }
     textarea:focus { outline: none; border-color: #38bdf8; }
     button[type="submit"] {
-      height: 44px;
-      padding: 0 14px;
+      height: 42px;
+      padding: 0 13px;
       border: none;
       border-radius: 10px;
       background: linear-gradient(135deg, #10b981, #059669);
@@ -294,7 +330,6 @@
       cursor: pointer;
       flex-shrink: 0;
     }
-    button[type="submit"]:hover { background: linear-gradient(135deg, #059669, #047857); }
     button:disabled { opacity: 0.6; cursor: not-allowed; }
 
     .live-overlay {
@@ -319,7 +354,7 @@
       box-shadow: 0 12px 35px rgba(2, 132, 199, 0.35);
       transition: transform 0.25s ease;
     }
-    .live-orb.pulse { transform: scale(1.08); }
+    .live-orb.pulse { transform: scale(1.1); }
     .live-status { font-size: 1rem; font-weight: bold; color: #0f172a; }
     .live-transcript { font-size: 0.9rem; color: #334155; line-height: 1.7; max-height: 150px; overflow-y: auto; padding: 0 8px; }
     .live-bottom { display: flex; justify-content: center; gap: 18px; align-items: center; padding-bottom: 12px; }
@@ -399,19 +434,24 @@
 
   <div id="chat"></div>
 
+  <div class="attachment-bar" id="attachmentBar">
+    <span id="attachmentLabel">فایل انتخاب‌شده</span>
+    <button type="button" class="reset-tool-btn" id="clearAttachmentBtn">حذف فایل</button>
+  </div>
+
   <div class="plus-menu" id="plusMenu">
-    <button type="button" class="menu-opt" data-tool="camera">📷 دوربین</button>
-    <button type="button" class="menu-opt" data-tool="photos">🖼️ تصاویر</button>
-    <button type="button" class="menu-opt" data-tool="files">📎 فایل‌ها</button>
-    <button type="button" class="menu-opt" data-tool="plugins">🔌 افزونه‌ها</button>
+    <button type="button" class="menu-opt" data-tool="camera">📷 عکس / دوربین</button>
+    <button type="button" class="menu-opt" data-tool="video_gallery">🎬 ویدیو از گالری</button>
+    <button type="button" class="menu-opt" data-tool="video_link">🔗 ویدیوی یوتیوب / تیک‌تاک</button>
+    <button type="button" class="menu-opt" data-tool="files">📎 فایل متنی</button>
     <button type="button" class="menu-opt" data-tool="think">🧠 تفکر عمیق‌تر</button>
   </div>
 
   <form id="form">
-    <button type="button" class="icon-btn" id="plusBtn" title="گزینه‌های بیشتر">+</button>
-    <textarea id="input" placeholder="از پرتو هر سوالی داری بپرس..."></textarea>
-    <button type="button" class="icon-btn" id="micBtn" title="تبدیل صدا به متن">🎤</button>
-    <button type="button" class="icon-btn" id="liveBtn" title="مکالمه صوتی زنده">🎙️</button>
+    <button type="button" class="icon-btn" id="plusBtn" title="عکس، ویدیو و گزینه‌ها">+</button>
+    <textarea id="input" placeholder="سوال، لینک ویدیو یا توضیح خود را بنویس..."></textarea>
+    <button type="button" class="icon-btn" id="micBtn" title="صدا به متن">🎤</button>
+    <button type="button" class="icon-btn" id="liveBtn" title="مکالمه زنده">🎙️</button>
     <button type="submit" id="sendBtn">ارسال</button>
   </form>
 
@@ -423,7 +463,7 @@
     <div class="live-center">
       <div class="live-orb" id="liveOrb"></div>
       <div class="live-status" id="liveStatus">در حال گوش دادن...</div>
-      <div class="live-transcript" id="liveTranscript">حرف بزنید تا پرتو جواب دهد و دوباره گوش کند.</div>
+      <div class="live-transcript" id="liveTranscript">حرف بزنید تا پرتو جواب دهد.</div>
     </div>
     <div class="live-bottom">
       <button type="button" class="live-circle-btn" id="liveMuteBtn" title="بی‌صدا / فعال کردن میکروفون">🎤</button>
@@ -473,6 +513,10 @@
     const filePicker = document.getElementById("filePicker");
     const menuOpts = document.querySelectorAll(".menu-opt");
 
+    const attachmentBar = document.getElementById("attachmentBar");
+    const attachmentLabel = document.getElementById("attachmentLabel");
+    const clearAttachmentBtn = document.getElementById("clearAttachmentBtn");
+
     const liveOverlay = document.getElementById("liveOverlay");
     const liveOrb = document.getElementById("liveOrb");
     const liveStatus = document.getElementById("liveStatus");
@@ -481,6 +525,7 @@
     const liveCloseBtn = document.getElementById("liveCloseBtn");
 
     let currentTool = "normal";
+    let pendingAttachment = null;
     let sessions = loadSessions();
     let activeSessionId = sessions[0]?.id || createNewSessionObj();
     let userGmail = localStorage.getItem(STORAGE_GMAIL_KEY) || "";
@@ -488,6 +533,8 @@
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let dictRecognition = null;
     let isDictating = false;
+    let audioRecorder = null;
+    let audioChunks = [];
 
     let liveActive = false;
     let liveMuted = false;
@@ -496,25 +543,19 @@
 
     const toolLabels = {
       normal: "حالت فعلی: گفتگوی عادی",
-      image_prompt: "حالت فعلی: ایجاد تصویر یا استیکر",
-      write_edit: "حالت فعلی: بنویسید یا ویرایش کنید",
-      web_guide: "حالت فعلی: جستجو در وب",
-      camera: "حالت فعلی: دوربین",
-      photos: "حالت فعلی: تصاویر",
-      files: "حالت فعلی: فایل‌ها",
-      plugins: "حالت فعلی: افزونه‌ها",
+      camera: "حالت فعلی: تحلیل عکس / دوربین",
+      video_gallery: "حالت فعلی: تحلیل ویدیوی گالری",
+      video_link: "حالت فعلی: تحلیل ویدیوی یوتیوب / تیک‌تاک",
+      files: "حالت فعلی: بررسی فایل متنی",
       think: "حالت فعلی: تفکر عمیق‌تر"
     };
 
     const toolInstructions = {
       normal: "پاسخ‌ها را واضح، صمیمی و دقیق بده.",
-      image_prompt: "برای درخواست تصویر یا استیکر، پرامپت دقیق بده و اگر ابزار تولید تصویر جدا لازم است شفاف توضیح بده.",
-      write_edit: "متن را با کیفیت بالا بنویس، اصلاح کن یا بازنویسی کن.",
-      web_guide: "موضوع را با توضیح شفاف و منظم بررسی کن.",
-      camera: "بر اساس توضیح کاربر درباره صحنه دوربین، راهنمای دقیق بده.",
-      photos: "بر اساس توضیح کاربر درباره عکس، راهنما یا پرامپت مناسب بده.",
-      files: "محتوای متنی فایل را دقیق بررسی، خلاصه یا ویرایش کن.",
-      plugins: "راهکار عملی و مرحله‌به‌مرحله ارائه بده.",
+      camera: "کاربر یک عکس فرستاده است. حتماً محتوای تصویر را با دقت ببین و به هر سوال یا درخواست کاربر درباره آن پاسخ کامل و دقیق بده.",
+      video_gallery: "کاربر یک ویدیو فرستاده است. حتماً صحنه‌ها، افراد، متن‌ها و اتفاقات ویدیو را بررسی کن و به هر سوال درباره ویدیو پاسخ بده.",
+      video_link: "کاربر لینک یا توضیح ویدیویی از یوتیوب، تیک‌تاک یا شبکه اجتماعی فرستاده است. لینک را بررسی کن؛ اگر از این محیط دسترسی مستقیم به تماشای ویدیو ممکن نیست، شفاف توضیح بده که برای دیدن محتوای دقیق ویدیو، متن/خلاصه یا فایل ویدیو را بفرستد تا تحلیل کنی.",
+      files: "محتوای فایل را با دقت بررسی کن و پاسخ دقیق بده.",
       think: "مسئله را عمیق‌تر و مرحله‌به‌مرحله تحلیل کن."
     };
 
@@ -538,7 +579,14 @@
 
     function saveSessions() {
       try {
-        localStorage.setItem(STORAGE_CHATS_KEY, JSON.stringify(sessions.slice(0, 30)));
+        const slim = sessions.slice(0, 30).map((s) => ({
+          ...s,
+          messages: (s.messages || []).map((m) => ({
+            role: m.role,
+            content: m.content
+          }))
+        }));
+        localStorage.setItem(STORAGE_CHATS_KEY, JSON.stringify(slim));
       } catch {}
     }
 
@@ -566,15 +614,12 @@
 
     function renderSavedGmailChips() {
       savedGmailChips.innerHTML = "";
-      const list = loadSavedGmails();
-      list.forEach((addr) => {
+      loadSavedGmails().forEach((addr) => {
         const chip = document.createElement("button");
         chip.type = "button";
         chip.textContent = addr;
         chip.style.cssText = "padding:5px 9px; border-radius:999px; border:1px solid #284166; background:#0b1324; color:#7dd3fc; font-size:0.78rem; cursor:pointer;";
-        chip.addEventListener("click", () => {
-          gmailInput.value = addr;
-        });
+        chip.addEventListener("click", () => { gmailInput.value = addr; });
         savedGmailChips.appendChild(chip);
       });
     }
@@ -587,9 +632,7 @@
       setTimeout(() => gmailInput.focus(), 50);
     });
 
-    cancelGmailBtn.addEventListener("click", () => {
-      gmailModal.style.display = "none";
-    });
+    cancelGmailBtn.addEventListener("click", () => { gmailModal.style.display = "none"; });
 
     saveGmailConfirmBtn.addEventListener("click", () => {
       const clean = gmailInput.value.trim();
@@ -614,25 +657,17 @@
     sendNotesBtn.addEventListener("click", async () => {
       threeDotsMenu.classList.remove("open");
       if (!userGmail) {
-        alert("ابتدا از همین منوی سه‌نقطه، جیمیل خود را ثبت کنید.");
+        alert("ابتدا جیمیل خود را ثبت کنید.");
         return;
       }
       const s = getActiveSession();
       if (!s.messages.length) {
-        alert("در این صفحه هنوز نوشته‌ای برای ارسال وجود ندارد.");
+        alert("در این صفحه هنوز نوشته‌ای وجود ندارد.");
         return;
       }
-      const textBody = s.messages
-        .map((m) => `${m.role === "user" ? "شما" : "پرتو"}:\n${m.content}`)
-        .join("\n\n-------------------\n\n");
-
-      try {
-        await navigator.clipboard.writeText(textBody);
-      } catch {}
-
-      const subject = encodeURIComponent(`نوشته‌های پرتو - ${s.title}`);
-      const body = encodeURIComponent(textBody.slice(0, 3500));
-      window.location.href = `mailto:${encodeURIComponent(userGmail)}?subject=${subject}&body=${body}`;
+      const textBody = s.messages.map((m) => `${m.role === "user" ? "شما" : "پرتو"}:\n${m.content}`).join("\n\n-------------------\n\n");
+      try { await navigator.clipboard.writeText(textBody); } catch {}
+      window.location.href = `mailto:${encodeURIComponent(userGmail)}?subject=${encodeURIComponent("نوشته‌های پرتو - " + s.title)}&body=${encodeURIComponent(textBody.slice(0, 3500))}`;
     });
 
     dotsBtn.addEventListener("click", (e) => {
@@ -686,6 +721,19 @@
       menuOpts.forEach((opt) => opt.classList.toggle("active", opt.dataset.tool === toolKey));
     }
 
+    function setAttachment(att) {
+      pendingAttachment = att;
+      if (att) {
+        attachmentLabel.textContent = `${att.kind === "video" ? "🎬 ویدیو" : "🖼️ عکس"}: ${att.name}`;
+        attachmentBar.classList.add("active");
+      } else {
+        attachmentLabel.textContent = "";
+        attachmentBar.classList.remove("active");
+      }
+    }
+
+    clearAttachmentBtn.addEventListener("click", () => setAttachment(null));
+
     plusBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       plusMenu.classList.toggle("open");
@@ -697,7 +745,10 @@
       if (!threeDotsMenu.contains(e.target) && e.target !== dotsBtn) threeDotsMenu.classList.remove("open");
     });
 
-    resetToolBtn.addEventListener("click", () => setTool("normal"));
+    resetToolBtn.addEventListener("click", () => {
+      setTool("normal");
+      setAttachment(null);
+    });
 
     menuOpts.forEach((opt) => {
       opt.addEventListener("click", () => {
@@ -710,10 +761,10 @@
           filePicker.click();
           return;
         }
-        if (chosen === "photos") {
-          filePicker.accept = "image/*";
+        if (chosen === "video_gallery") {
+          filePicker.accept = "video/*";
           filePicker.removeAttribute("capture");
-          setTool("photos");
+          setTool("video_gallery");
           filePicker.click();
           return;
         }
@@ -732,17 +783,45 @@
     filePicker.addEventListener("change", () => {
       const f = filePicker.files && filePicker.files[0];
       if (!f) return;
-      if (f.type && f.type.startsWith("text/")) {
+
+      if (f.type && f.type.startsWith("image/")) {
         const reader = new FileReader();
         reader.onload = () => {
-          const content = String(reader.result || "").slice(0, 4000);
-          input.value = `محتوای فایل (${f.name}):\n${content}`;
+          setAttachment({
+            name: f.name,
+            mimeType: f.type,
+            dataUrl: String(reader.result || ""),
+            kind: "image"
+          });
+          if (!input.value.trim()) input.value = "این عکس را ببین و توضیح بده داخلش چه می‌بینی.";
+          input.focus();
+        };
+        reader.readAsDataURL(f);
+      } else if (f.type && f.type.startsWith("video/")) {
+        if (f.size > 12 * 1024 * 1024) {
+          alert("حجم ویدیو زیاد است (بیشتر از ۱۲ مگابایت). یک ویدیوی کوتاه‌تر انتخاب کن.");
+          filePicker.value = "";
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          setAttachment({
+            name: f.name,
+            mimeType: f.type,
+            dataUrl: String(reader.result || ""),
+            kind: "video"
+          });
+          if (!input.value.trim()) input.value = "این ویدیو را ببین و درباره محتوایش توضیح بده.";
+          input.focus();
+        };
+        reader.readAsDataURL(f);
+      } else if (f.type && f.type.startsWith("text/")) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          input.value = `محتوای فایل (${f.name}):\n${String(reader.result || "").slice(0, 4000)}`;
           input.focus();
         };
         reader.readAsText(f, "utf-8");
-      } else {
-        input.value = `فایل «${f.name}» انتخاب شد. درباره این موضوع چه کمکی می‌خواهی؟`;
-        input.focus();
       }
       filePicker.value = "";
     });
@@ -764,9 +843,9 @@
       quickList.className = "quick-actions";
 
       const items = [
-        { label: "🖼️ ایجاد تصویر یا استیکر", tool: "image_prompt", sample: "یک پرامپت دقیق برای ساخت تصویر یا استیکر بنویس: " },
-        { label: "✏️ بنویسید یا ویرایش کنید", tool: "write_edit", sample: "این متن را بنویس یا ویرایش کن: " },
-        { label: "🌐 جستجو در وب", tool: "web_guide", sample: "درباره این موضوع توضیح کامل و دقیق بده: " }
+        { label: "📷 تحلیل عکس یا ویدیو", tool: "camera", sample: "این تصویر یا ویدیو را بررسی کن: " },
+        { label: "🎬 بررسی ویدیوی یوتیوب / تیک‌تاک", tool: "video_link", sample: "لینک ویدیو: " },
+        { label: "✏️ بنویسید یا ویرایش کنید", tool: "think", sample: "این موضوع را دقیق بررسی کن: " }
       ];
 
       items.forEach((it) => {
@@ -794,11 +873,7 @@
     }
 
     function escapeHtml(str) {
-      return str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
 
     function formatBotText(raw) {
@@ -806,7 +881,6 @@
       const lines = safe.split("\n");
       let html = "";
       let inList = false;
-
       for (let line of lines) {
         let trimmed = line.trim();
         if (!trimmed) {
@@ -829,13 +903,29 @@
       return html || "<p>پاسخی دریافت نشد.</p>";
     }
 
-    function appendUserBubble(text) {
+    function appendUserBubble(text, attachment = null) {
       removeWelcome();
       const wrap = document.createElement("div");
       wrap.className = "msg-wrap wrap-user";
       const div = document.createElement("div");
       div.className = "msg user";
       div.textContent = text;
+
+      if (attachment && attachment.dataUrl) {
+        if (attachment.kind === "image") {
+          const img = document.createElement("img");
+          img.src = attachment.dataUrl;
+          img.className = "media-preview";
+          div.appendChild(img);
+        } else if (attachment.kind === "video") {
+          const vid = document.createElement("video");
+          vid.src = attachment.dataUrl;
+          vid.controls = true;
+          vid.className = "media-preview";
+          div.appendChild(vid);
+        }
+      }
+
       wrap.appendChild(div);
       chat.appendChild(wrap);
       chat.scrollTop = chat.scrollHeight;
@@ -868,10 +958,7 @@
               await navigator.clipboard.writeText(rawText);
               copyBtn.textContent = "کپی شد ✓";
               setTimeout(() => (copyBtn.textContent = "کپی"), 1500);
-            } catch {
-              copyBtn.textContent = "ناموفق";
-              setTimeout(() => (copyBtn.textContent = "کپی"), 1500);
-            }
+            } catch {}
           };
           chat.scrollTop = chat.scrollHeight;
         },
@@ -890,27 +977,40 @@
         return;
       }
       s.messages.forEach((m) => {
-        if (m.role === "user") {
-          appendUserBubble(m.content);
-        } else {
+        if (m.role === "user") appendUserBubble(m.content);
+        else {
           const b = createBotBubble("");
           b.setReply(m.content);
         }
       });
     }
 
-    async function sendToParto(text) {
+    async function sendToParto(text, attachment = null) {
       const s = getActiveSession();
       const recentHistory = s.messages.slice(-8);
       const payloadMessages = [...recentHistory, { role: "user", content: text }];
+
+      let base64Data = "";
+      let mimeType = "";
+      if (attachment && attachment.dataUrl && attachment.dataUrl.includes(",")) {
+        base64Data = attachment.dataUrl.split(",")[1];
+        mimeType = attachment.mimeType || "";
+      }
+
+      const effectiveTool =
+        attachment?.kind === "video" ? "video_gallery" :
+        attachment?.kind === "image" ? "camera" : currentTool;
+
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: text,
           messages: payloadMessages,
-          mode: currentTool,
-          modeInstruction: toolInstructions[currentTool] || ""
+          mode: effectiveTool,
+          modeInstruction: toolInstructions[effectiveTool] || "",
+          mediaBase64: base64Data,
+          mediaMimeType: mimeType
         })
       });
       const data = await res.json();
@@ -927,30 +1027,73 @@
       renderActiveSession();
     });
 
-    micBtn.addEventListener("click", () => {
-      if (!SpeechRecognition) {
-        alert("مرورگر شما از تبدیل صدا به متن پشتیبانی نمی‌کند. لطفاً از Chrome یا Edge استفاده کنید.");
+    micBtn.addEventListener("click", async () => {
+      if (isDictating) {
+        isDictating = false;
+        micBtn.classList.remove("recording");
+        if (dictRecognition) { try { dictRecognition.stop(); } catch {} }
+        if (audioRecorder && audioRecorder.state !== "inactive") { try { audioRecorder.stop(); } catch {} }
         return;
       }
-      if (isDictating && dictRecognition) {
-        dictRecognition.stop();
-        return;
-      }
-      dictRecognition = new SpeechRecognition();
-      dictRecognition.lang = "fa-IR";
-      dictRecognition.interimResults = true;
-      dictRecognition.continuous = false;
+
       isDictating = true;
       micBtn.classList.add("recording");
       const baseText = input.value ? input.value + " " : "";
-      dictRecognition.onresult = (event) => {
-        let transcript = "";
-        for (let i = 0; i < event.results.length; i++) transcript += event.results[i][0].transcript;
-        input.value = (baseText + transcript).trim();
-      };
-      dictRecognition.onerror = () => { isDictating = false; micBtn.classList.remove("recording"); };
-      dictRecognition.onend = () => { isDictating = false; micBtn.classList.remove("recording"); input.focus(); };
-      dictRecognition.start();
+      let gotSpeechRecognitionText = false;
+
+      if (SpeechRecognition) {
+        try {
+          dictRecognition = new SpeechRecognition();
+          dictRecognition.lang = "fa-IR";
+          dictRecognition.interimResults = true;
+          dictRecognition.continuous = false;
+          dictRecognition.onresult = (event) => {
+            let transcript = "";
+            for (let i = 0; i < event.results.length; i++) transcript += event.results[i][0].transcript;
+            if (transcript.trim()) {
+              gotSpeechRecognitionText = true;
+              input.value = (baseText + transcript).trim();
+            }
+          };
+          dictRecognition.onerror = () => {};
+          dictRecognition.onend = () => {
+            if (!audioRecorder || audioRecorder.state === "inactive") {
+              isDictating = false;
+              micBtn.classList.remove("recording");
+              input.focus();
+            }
+          };
+          dictRecognition.start();
+        } catch {}
+      }
+
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          audioChunks = [];
+          audioRecorder = new MediaRecorder(stream);
+          audioRecorder.ondataavailable = (ev) => {
+            if (ev.data && ev.data.size > 0) audioChunks.push(ev.data);
+          };
+          audioRecorder.onstop = () => {
+            stream.getTracks().forEach((t) => t.stop());
+            isDictating = false;
+            micBtn.classList.remove("recording");
+            if (!gotSpeechRecognitionText && !input.value.trim()) {
+              input.placeholder = "صدا ضبط شد؛ اگر متن نیامد از میکروفون کیبورد گوشی استفاده کن...";
+            }
+            input.focus();
+          };
+          audioRecorder.start();
+          setTimeout(() => {
+            if (audioRecorder && audioRecorder.state !== "inactive") audioRecorder.stop();
+          }, 6000);
+        } catch {
+          isDictating = false;
+          micBtn.classList.remove("recording");
+          alert("لطفاً اجازه دسترسی به میکروفون را در تنظیمات گوشی بده.");
+        }
+      }
     });
 
     function speakAndThenListen(replyText) {
@@ -967,7 +1110,6 @@
         utter.onend = () => {
           liveOrb.classList.remove("pulse");
           if (liveActive && !liveMuted) startLiveListening();
-          else if (liveActive) liveStatus.textContent = "میکروفون بی‌صدا است";
         };
         utter.onerror = () => {
           liveOrb.classList.remove("pulse");
@@ -983,7 +1125,7 @@
     function startLiveListening() {
       if (!liveActive || liveMuted || liveBusy) return;
       if (!SpeechRecognition) {
-        liveStatus.textContent = "تشخیص صدا در این مرورگر پشتیبانی نمی‌شود";
+        liveStatus.textContent = "در این مرورگر گوشی، تشخیص صدای زنده محدود است؛ از کیبورد صوتی گوشی یا لپ‌تاپ استفاده کن.";
         return;
       }
       try {
@@ -992,7 +1134,7 @@
         liveRecognition.lang = "fa-IR";
         liveRecognition.interimResults = true;
         liveRecognition.continuous = false;
-        liveStatus.textContent = "در حال گوش دادن... سوالت را بپرس";
+        liveStatus.textContent = "در حال گوش دادن... واضح صحبت کن";
         liveOrb.classList.add("pulse");
 
         let finalSpoken = "";
@@ -1017,7 +1159,7 @@
           }
 
           liveBusy = true;
-          liveStatus.textContent = "پرتو در حال فکر کردن است...";
+          liveStatus.textContent = "پرتو در حال پاسخ دادن است...";
           const s = getActiveSession();
           if (s.title === "صفحه جدید") s.title = spokenText.slice(0, 28);
           s.messages.push({ role: "user", content: spokenText });
@@ -1043,19 +1185,24 @@
 
         liveRecognition.onerror = () => {
           liveOrb.classList.remove("pulse");
-          if (liveActive && !liveMuted && !liveBusy) setTimeout(() => startLiveListening(), 400);
+          if (liveActive && !liveMuted && !liveBusy) setTimeout(() => startLiveListening(), 500);
         };
 
         liveRecognition.start();
       } catch {
-        if (liveActive && !liveMuted && !liveBusy) setTimeout(() => startLiveListening(), 500);
+        if (liveActive && !liveMuted && !liveBusy) setTimeout(() => startLiveListening(), 600);
       }
     }
 
-    function openLiveMode() {
-      if (!SpeechRecognition) {
-        alert("برای مکالمه صوتی زنده، صفحه را در مرورگر Chrome یا Edge باز کن.");
-        return;
+    async function openLiveMode() {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          stream.getTracks().forEach((t) => t.stop());
+        } catch {
+          alert("لطفاً دسترسی میکروفون را برای مکالمه زنده باز کن.");
+          return;
+        }
       }
       if (isDictating && dictRecognition) dictRecognition.stop();
       liveActive = true;
@@ -1065,7 +1212,7 @@
       liveMuteBtn.textContent = "🎤";
       liveBtn.classList.add("live-active");
       liveOverlay.classList.add("open");
-      liveTranscript.textContent = "حرف بزنید تا پرتو جواب دهد و دوباره گوش کند.";
+      liveTranscript.textContent = "حرف بزنید تا پرتو جواب دهد.";
       startLiveListening();
     }
 
@@ -1105,27 +1252,31 @@
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const text = input.value.trim();
-      if (!text) return;
+      const att = pendingAttachment;
+      if (!text && !att) return;
 
+      const finalText = text || (att.kind === "video" ? "این ویدیو را ببین و درباره محتوایش توضیح بده." : "این عکس را ببین و توضیح بده داخلش چه می‌بینی.");
       input.value = "";
+      setAttachment(null);
       sendBtn.disabled = true;
 
       const s = getActiveSession();
-      if (s.title === "صفحه جدید") s.title = text.slice(0, 28);
-      s.messages.push({ role: "user", content: text });
+      if (s.title === "صفحه جدید") s.title = finalText.slice(0, 28);
+      const historyNote = att ? `${finalText} [فایل: ${att.name}]` : finalText;
+      s.messages.push({ role: "user", content: historyNote });
       saveSessions();
       renderChatList();
-      appendUserBubble(text);
+      appendUserBubble(finalText, att);
 
-      const botMsg = createBotBubble("پرتو در حال پاسخ دادن است...");
+      const botMsg = createBotBubble("پرتو در حال بررسی و پاسخ دادن است...");
 
       try {
-        const reply = await sendToParto(text);
+        const reply = await sendToParto(finalText, att);
         s.messages.push({ role: "assistant", content: reply });
         saveSessions();
         botMsg.setReply(reply);
       } catch {
-        botMsg.setError("خطا در ارتباط با سرور.");
+        botMsg.setError("خطا در ارتباط با سرور یا حجم فایل زیاد است.");
       } finally {
         sendBtn.disabled = false;
         input.focus();
